@@ -1,0 +1,208 @@
+package org.firstinspires.ftc.teamcode.opmodes.OldenCodes;
+
+import com.acmerobotics.roadrunner.geometry.*;
+import com.acmerobotics.roadrunner.trajectory.*;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import static java.lang.Math.*;
+
+import org.firstinspires.ftc.teamcode.commands.*;
+import org.firstinspires.ftc.teamcode.commands.SleeveDetection.*;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.High;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.*;
+
+import java.util.*;
+
+//TUNED
+@Autonomous(name = "LM2RHC", group = "Final")
+public class LM2RHC extends AutoAbstract {
+
+    public static TrajectorySequence WaitTemp;
+
+    private double wait = 0.2;
+    public static Pose2d INIT = new Pose2d(33.5, -65, toRadians(-90));
+    public static Pose2d SCORING_POSITION = new Pose2d(28,-10, Math.toRadians(135));
+    public static Pose2d STORAGE_POSITION = new Pose2d(60, -12.25, toRadians(0));
+    public static Pose2d PARK_LEFT = new Pose2d(12, -12, toRadians(-90));
+    public static Pose2d PARK_MIDDLE = new Pose2d(30, -32, toRadians(-90));
+    public static Pose2d PARK_RIGHT = new Pose2d(60, -12.5, toRadians(-90));
+
+    @Override
+    public void execute(TSEPosition position){
+        camera.closeCameraDevice();
+        bot.claw.close();
+
+        //Score 1+0
+        bot.setPosition(State.HIGH);
+        drive.followTrajectorySequence(ScorePreload);
+        bot.claw.open();
+
+        drive.followTrajectorySequence(WaitAtScore1);
+
+        //Intake from high
+        bot.setPosition(State.INTAKING);
+        bot.slide.setFive();
+        drive.followTrajectorySequence(ScoreToStorage1);
+        bot.claw.close();
+
+        drive.followTrajectorySequence(WaitTemp);
+
+        bot.slide.setPosition(State.HIGH);
+
+        drive.followTrajectorySequence(WaitAtStorage1);
+
+        //Score 1+1
+        bot.setPosition(State.HIGH);
+        drive.followTrajectorySequence(StorageToScore1);
+        bot.claw.open();
+
+        drive.followTrajectorySequence(WaitAtScore2);
+
+        //Intake from high
+        bot.setPosition(State.INTAKING);
+        bot.slide.setFour();
+        drive.followTrajectorySequence(ScoreToStorage2);
+        bot.claw.close();
+
+        drive.followTrajectorySequence(WaitAtStorage2);
+
+        //Score 1+2
+        bot.setPosition(State.HIGH);
+        drive.followTrajectorySequence(StorageToScore2);
+        bot.claw.open();
+
+        drive.followTrajectorySequence(WaitAtScore3);
+
+        //Intake from high
+        bot.setPosition(State.INTAKING);
+        bot.slide.setThree();
+        drive.followTrajectorySequence(ScoreToStorage3);
+        bot.claw.close();
+
+        drive.followTrajectorySequence(WaitAtStorage3);
+
+        //Score 1+3
+        bot.setPosition(State.HIGH);
+        drive.followTrajectorySequence(StorageToScore3);
+        bot.claw.open();
+
+        drive.followTrajectorySequence(WaitAtScore4);
+
+        bot.setPosition(State.INTAKING);
+        bot.claw.close();
+        drive.followTrajectorySequence(ParkMiddle);
+
+        switch(position) {
+            case LEFT:
+                drive.followTrajectorySequence(ParkLeft);
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(ParkRight);
+                break;
+        }
+    }
+
+    public void build(){
+        drive.setPoseEstimate(INIT);
+        bot.claw.close();
+
+        ScorePreload = drive.trajectorySequenceBuilder(INIT)
+                .back(34)
+                .splineTo(SCORING_POSITION.vec(), SCORING_POSITION.getHeading())
+                //.addTemporalMarker(5, () -> {
+                //    bot.setPosition(State.LOW);
+                //})
+                //.waitSeconds(wait)
+                .build();
+        WaitAtScore1 = drive.trajectorySequenceBuilder(ScorePreload.end())
+                .waitSeconds(wait)
+                .build();
+
+        ScoreToStorage1 = drive.trajectorySequenceBuilder(WaitAtScore1.end())
+                .setReversed(false)
+                .splineTo(new Vector2d(STORAGE_POSITION.getX()+0.5, STORAGE_POSITION.getY()+0.75), STORAGE_POSITION.getHeading())
+                .forward(wait)
+                .build();
+        WaitTemp = drive.trajectorySequenceBuilder(ScoreToStorage1.end())
+                .waitSeconds(0.2)
+                .build();
+        WaitAtStorage1 = drive.trajectorySequenceBuilder(WaitTemp.end())
+                .waitSeconds(wait)
+                .build();
+        StorageToScore1 = drive.trajectorySequenceBuilder(WaitAtStorage1.end())
+                .setReversed(true)
+                .waitSeconds(0.2)
+                .back(1.5)
+                .splineTo(new Vector2d(SCORING_POSITION.getX()+1.75,SCORING_POSITION.getY()+2.5), SCORING_POSITION.getHeading())
+                //.addTemporalMarker(3, () -> {
+                //    bot.setPosition(State.LOW);
+                //})
+                //.waitSeconds(wait)
+                .build();
+        WaitAtScore2 = drive.trajectorySequenceBuilder(StorageToScore1.end())
+                .waitSeconds(wait)
+                .build();
+
+        ScoreToStorage2 = drive.trajectorySequenceBuilder(WaitAtScore2.end())
+                .setReversed(false)
+                .splineTo(new Vector2d(STORAGE_POSITION.getX(), STORAGE_POSITION.getY()-0.5), STORAGE_POSITION.getHeading())
+                .forward(1.5)
+                .build();
+        WaitAtStorage2 = drive.trajectorySequenceBuilder(ScoreToStorage2.end())
+                .waitSeconds(wait)
+                .build();
+        StorageToScore2 = drive.trajectorySequenceBuilder(WaitAtStorage2.end())
+                .setReversed(true)
+                .waitSeconds(0.2)
+                .back(1.5)
+                .splineTo(new Vector2d(SCORING_POSITION.getX()+1.75,SCORING_POSITION.getY()+3.5), SCORING_POSITION.getHeading())
+                //.addTemporalMarker(3, () -> {
+                //    bot.setPosition(State.LOW);
+                //})
+                //.waitSeconds(wait)
+                .build();
+        WaitAtScore3 = drive.trajectorySequenceBuilder(StorageToScore2.end())
+                .waitSeconds(wait)
+                .build();
+
+        ScoreToStorage3 = drive.trajectorySequenceBuilder(WaitAtScore3.end())
+                .setReversed(false)
+                .splineTo(new Vector2d(STORAGE_POSITION.getX()-0.75, STORAGE_POSITION.getY()-0.5), STORAGE_POSITION.getHeading())
+                .forward(1.5)
+                .build();
+        WaitAtStorage3 = drive.trajectorySequenceBuilder(ScoreToStorage3.end())
+                .waitSeconds(wait)
+                .build();
+        StorageToScore3 = drive.trajectorySequenceBuilder(WaitAtStorage3.end())
+                .setReversed(true)
+                .back(1.5)
+                .splineTo(new Vector2d(SCORING_POSITION.getX()+1.5,SCORING_POSITION.getY()+5), SCORING_POSITION.getHeading())
+                //.addTemporalMarker(3, () -> {
+                //    bot.setPosition(State.LOW);
+                //})
+                //.waitSeconds(wait)
+                .build();
+        WaitAtScore4 = drive.trajectorySequenceBuilder(StorageToScore3.end())
+                .waitSeconds(wait)
+                .build();
+
+        ParkMiddle = drive.trajectorySequenceBuilder(WaitAtScore4.end())
+                .setReversed(false)
+                .splineTo(PARK_MIDDLE.vec(), PARK_MIDDLE.getHeading())
+                .build();
+        ParkLeft = drive.trajectorySequenceBuilder(ParkMiddle.end())
+                .setReversed(false)
+                .strafeRight(24)
+                .waitSeconds(0.1)
+                //.back(5)
+                .build();
+        ParkRight = drive.trajectorySequenceBuilder(ParkMiddle.end())
+                .setReversed(false)
+                .strafeLeft(24)
+                .build();
+    }
+
+    @Override
+    public void setCameraPosition(){
+        webcamName = "Right";
+    }
+}

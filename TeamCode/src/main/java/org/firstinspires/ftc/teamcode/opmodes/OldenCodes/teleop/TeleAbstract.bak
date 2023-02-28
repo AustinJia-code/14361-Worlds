@@ -1,0 +1,136 @@
+package org.firstinspires.ftc.teamcode.opmodes.OldenCodes.teleop;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys.*;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import static org.firstinspires.ftc.teamcode.commands.State.*;
+
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
+
+@Config
+public abstract class TeleAbstract extends OpMode {
+
+    private Robot bot;
+
+    private ElapsedTime runtime;
+    private GamepadEx driver, operator;
+    int alliance;
+
+    public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
+    public String allianceToString(){
+        return alliance == -1 ? "BLUE" : (alliance == 0 ? "NEITHER" : "RED");
+    }
+
+    @Override
+    public void init() {
+        telemetry.addLine("Status: Initializing");
+        telemetry.update();
+
+        setAlliance();
+
+        bot = new Robot(hardwareMap, telemetry);
+
+        driver = new GamepadEx(gamepad1);   // drives the drivetrain
+        operator = new GamepadEx(gamepad2); // controls the scoring systems
+        runtime = new ElapsedTime();
+    }
+
+    @Override
+    public void init_loop(){
+        telemetry.addLine("Status: Initialized");
+        telemetry.addData("Alliance:", allianceToString());
+        telemetry.update();
+    }
+
+    @Override
+    public void start() {
+        runtime.reset();
+    }
+
+    @Override
+    public void loop() {
+
+        // ---------------------------- LOOPING ---------------------------- //
+        driver.readButtons();
+        operator.readButtons();
+
+
+        // ---------------------------- DRIVER CODE ---------------------------- //
+        bot.drivetrain.drive(driver);
+
+        if(driver.wasJustPressed(Button.Y)){                                        // Y = Resets Gyro
+            bot.drivetrain.recenter();
+        }
+
+        if(driver.wasJustPressed(Button.X)){                                        // X = Switches between Robo/Field Centric
+            //bot.drivetrain.switchModes();
+        }
+
+        if(driver.getTrigger(Trigger.LEFT_TRIGGER) > 0.1){
+            bot.drivetrain.setSpeed(1 - driver.getTrigger(Trigger.LEFT_TRIGGER)/1.5);
+        //}else if(driver.getTrigger(Trigger.RIGHT_TRIGGER) > 0.1){
+         //   bot.drivetrain.setSpeed(0.6 + driver.getTrigger(Trigger.RIGHT_TRIGGER) / 4.0);
+        }else{
+            bot.drivetrain.setSpeed(1);
+        }
+
+        // ---------------------------- OPERATOR CODE ---------------------------- //
+        bot.slide.powerSlides();
+
+        if(operator.wasJustPressed(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
+            bot.setPosition(INTAKING);
+        }
+        if(operator.wasJustReleased(Button.RIGHT_BUMPER)){                            // Left Bumper = Closes Claw, Goes to Ground
+            bot.claw.close();
+        }
+        if(operator.wasJustPressed(Button.LEFT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
+            bot.setPosition(BACKWARDS);
+        }
+        if(operator.wasJustReleased(Button.LEFT_BUMPER)){                            // Left Bumper = Closes Claw, Goes to Ground
+            bot.claw.close();
+        }
+
+        if(operator.wasJustPressed(Button.DPAD_UP)){                                      // Y = Sets High position
+            bot.setPosition(HIGH);
+        }
+
+        if(operator.wasJustPressed(Button.DPAD_RIGHT)){                                      // B = Sets Middle position
+            bot.setPosition(MIDDLE);
+        }
+
+        if(operator.wasJustPressed(Button.DPAD_LEFT)){                                      // A = Sets Low position
+            bot.setPosition(LOW);
+        }
+
+        if(operator.wasJustPressed(Button.A)){
+            bot.claw.flip();
+        }
+
+        if(operator.wasJustPressed(Button.X)){
+            bot.claw.open();
+        }
+
+        if(operator.wasJustPressed(Button.B)){
+            bot.claw.close();
+        }
+
+        bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
+        bot.arm.incrementArms(-operator.getLeftY());                 // Left Y = slowly move arm
+
+
+        // ---------------------------- TELEMETRY ---------------------------- //
+        telemetry.addData("Alliance:", allianceToString());
+        telemetry.addData("Runtime:", runtime.toString());
+        //telemetry.addData("IMU: ", Math.toDegrees(bot.drivetrain.getPoseEstimate().getHeading()));
+        //telemetry.addData("Mode:", bot.drivetrain.getMode());
+    }
+
+    @Override
+    public void stop() {
+        bot.setPosition(INTAKING);
+        super.stop();
+    }
+}

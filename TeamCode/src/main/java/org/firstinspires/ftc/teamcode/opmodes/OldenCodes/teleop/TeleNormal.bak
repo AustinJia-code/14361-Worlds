@@ -1,0 +1,10 @@
+package org.firstinspires.ftc.teamcode.opmodes.OldenCodes.teleop;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.opmodes.OldenCodes.teleop.TeleAbstract;
+
+@TeleOp(name = "Tele Normal", group = "Final")
+public class TeleNormal extends TeleAbstract {
+    public void setAlliance() { this.alliance = -1; }
+}
