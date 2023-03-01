@@ -26,7 +26,7 @@ public abstract class BasedAbstract extends OpMode {
     int loop;
     double multiplier;
     private boolean curRT, oldRT;
-    List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+    //List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
 
@@ -48,7 +48,7 @@ public abstract class BasedAbstract extends OpMode {
 
         voltageReader = new VoltageReader(hardwareMap);
 
-        for(LynxModule hub : allHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        //for(LynxModule hub : allHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 
         driver = new GamepadEx(gamepad1);   // drives the drivetrain
         operator = new GamepadEx(gamepad2); // controls the scoring systems
@@ -216,8 +216,9 @@ public abstract class BasedAbstract extends OpMode {
         // ---------------------------- TELEMETRY ---------------------------- //
         telemetry.addData("Runtime:", runtime.toString());
         telemetry.addData("Looptime: ", loopTime);
-        //telemetry.addData("Multiplier: ", multiplier);
+        telemetry.addData("Multiplier: ", multiplier);
         telemetry.addData("Voltage: ", voltageReader.getVoltage());
+        telemetry.addData("Slide Report: ", bot.slide.slideReport());
     }
 
     @Override

@@ -67,7 +67,7 @@ public class LiftPID {
         if(Math.abs(position-target) < 10) return 0;
         else if(position - target > 200) return -1;
         else if (position - target > 100) return -0.75;
-        else if (position - target > 50) return -0.5;
+        else if (position - target > 0) return -0.5;
         return getCorrection((target-position)/max);
     }
 

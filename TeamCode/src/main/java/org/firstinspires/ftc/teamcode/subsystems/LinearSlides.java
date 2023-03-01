@@ -17,7 +17,7 @@ public class LinearSlides implements Subsystem {
     private DcMotorEx leftSlide, rightSlide;
 
     private LiftPID leftPID, rightPID;
-    private int HIGH = spoolChange(1390), MIDDLE = spoolChange(620), LOW = 0, INTAKE = 020;
+    private int HIGH = spoolChange(1390), MIDDLE = spoolChange(620), LOW = 0, INTAKE = 0;
     private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = -10;
     public int offset = 0;
     int target;
@@ -37,8 +37,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(2, 100, 1, 0, HIGH);
-        rightPID = new LiftPID(2, 100, 1, 0, HIGH);
+        leftPID = new LiftPID(3, 1, 1, 0, HIGH);
+        rightPID = new LiftPID(3, 1, 1, 0, HIGH);
 
         leftSlide.setPower(0);
         rightSlide.setPower(0);
@@ -118,6 +118,7 @@ public class LinearSlides implements Subsystem {
 
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
 
         rightSlide.setPower(1);
         leftSlide.setPower(1);
@@ -166,6 +167,6 @@ public class LinearSlides implements Subsystem {
     }
 
     public static int spoolChange(int height){
-        return (int) (height / 1.2);
+        return (int) (height / 1.2 / 384.5 * 145.1);
     }
 }

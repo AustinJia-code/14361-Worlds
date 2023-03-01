@@ -58,12 +58,12 @@ public class Claw implements Subsystem {
     }
 
     public void close(){
-        claw.setPosition(toServoPosition(45));
+        claw.setPosition(toServoPosition(122));
         open = false;
     }
 
     public void open(){
-        claw.setPosition(toServoPosition(105));
+        claw.setPosition(toServoPosition(182));
         open = true;
     }
 
