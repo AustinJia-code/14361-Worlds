@@ -17,6 +17,7 @@ public class Arm implements Subsystem {
     private double profileStartTime;
     private double profileTargetPosition = 5, profileStartPosition = 5;
     private double profileTravelDistance;
+    private double positionEstimate;
     Double goTo;
     TrapezoidalMotionProfile profile;
     private RunMode runMode;
@@ -24,7 +25,7 @@ public class Arm implements Subsystem {
     public Arm(HardwareMap hardwareMap){
         rightArm = hardwareMap.servo.get("rightArm");
         leftArm = hardwareMap.servo.get("leftArm");
-        leftArm.setDirection(Servo.Direction.REVERSE);
+        rightArm.setDirection(Servo.Direction.REVERSE);
 
         //Max accel: 100°/s Max vel: 500°/s
         profile = new TrapezoidalMotionProfile(50, 500);
@@ -70,7 +71,7 @@ public class Arm implements Subsystem {
                 break;
             case TELE:
                 if(target != profileTargetPosition) {
-                    profileStartPosition = leftArm.getPosition();
+                    profileStartPosition = positionEstimate;
                     profileTargetPosition = target;
                     profileTravelDistance = profileTargetPosition - profileStartPosition;
                     profileStartTime = System.currentTimeMillis();
@@ -81,18 +82,26 @@ public class Arm implements Subsystem {
     public void updateArms(){
         goTo = profile.motion_profile(Math.abs(profileTravelDistance), (System.currentTimeMillis() - profileStartTime)/1000);
         goTo = toServoPosition(Math.signum(profileTravelDistance) * goTo.doubleValue() + profileStartPosition);
-        //if(goTo.isNaN()) goTo = 0.0;
+        if(goTo.isNaN()) goTo = toServoPosition(profileStartPosition);
+        positionEstimate = toAngle(goTo);
         rightArm.setPosition(goTo);
         leftArm.setPosition(goTo);
     }
 
     public double toServoPosition(double angle){
-        return angle/(300);
+        return (angle/355);
+    }
+
+    public double toAngle(double position){
+        return position * 355;
     }
 
     public void setVertical(){ setArms(VERTICAL); }
 
-    public double toAxonPosition(double angle) { return (angle/(360*5))*0.85;}
+    //public double toAxonPosition(double angle) { return (angle/(360*5))*0.85;} //5 turn?
+    //public double toServoPosition(double angle){
+    //        return angle/(300); //gobilda torque
+    //    }
 
     public String armReport(){
         return goTo.toString() + " " + profileStartPosition + " " + profileTravelDistance + " " + (System.currentTimeMillis() - profileStartTime)/1000;

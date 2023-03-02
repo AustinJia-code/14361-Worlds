@@ -18,8 +18,8 @@ public class TrapezoidalMotionProfile {
     //_dt indicates change in time req
     public double motion_profile(double distance, double current_dt) {
 
-        double max_acceleration = 100;
-        double max_velocity = 500;
+        double max_acceleration = 500;
+        double max_velocity = 600;
 
         // calculate the time it takes to accelerate to max velocity
         double acceleration_dt = max_velocity / max_acceleration;
