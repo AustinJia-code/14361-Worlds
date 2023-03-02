@@ -129,6 +129,7 @@ public abstract class BasedAbstract extends OpMode {
 
         // ---------------------------- OPERATOR CODE ---------------------------- //
         bot.slide.powerSlides();
+        bot.arm.updateArms();
 
         if(operator.wasJustPressed(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
             bot.setPosition(INTAKING);
@@ -218,7 +219,7 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addData("Looptime: ", loopTime);
         telemetry.addData("Multiplier: ", multiplier);
         telemetry.addData("Voltage: ", voltageReader.getVoltage());
-        telemetry.addData("Slide Report: ", bot.slide.slideReport());
+        telemetry.addData("Arm Report: ", bot.arm.armReport());
     }
 
     @Override

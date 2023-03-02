@@ -42,9 +42,8 @@ public class LiftPID {
             return false;
 
     }
-    public void setPD(double p, double d){
+    public void setP(double p){
         kp = p;
-        kd = d;
     }
 
     public double getCorrection(double error) {
@@ -64,10 +63,12 @@ public class LiftPID {
     }
 
     public double getCorrectionPosition(double position){
+        /*
         if(Math.abs(position-target) < 10) return 0;
         else if(position - target > 200) return -1;
         else if (position - target > 100) return -0.75;
         else if (position - target > 0) return -0.5;
+         */
         return getCorrection((target-position)/max);
     }
 

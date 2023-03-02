@@ -80,6 +80,9 @@ public class LinearSlides implements Subsystem {
     public void incrementSlides(double input){
         switch(mode) {
             case POWER:
+                if(rightSlide.getCurrentPosition() < 300) rightPID.setP(10);
+                else rightPID.setP(3);
+
                 if (Math.abs(input) > 0.01) {
                     setTarget(
                             Range.clip(rightPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, 1650 + offset)
