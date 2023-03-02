@@ -14,9 +14,9 @@ public class Arm implements Subsystem {
     private Servo leftArm, rightArm;
     private double INTAKING = 5, GROUND = 5, SCORING = 182, BACKWARDS = 295, LEVEL = 210, VERTICAL = 130;
     private double update = 0.05;
-    private double startTime;
-    private double position = 5, oldPosition = 5;
-    private double travel;
+    private double profileStartTime;
+    private double profileTargetPosition = 5, profileStartPosition = 5;
+    private double profileTravelDistance;
     Double goTo;
     TrapezoidalMotionProfile profile;
     private RunMode runMode;
@@ -28,7 +28,7 @@ public class Arm implements Subsystem {
 
         //Max accel: 100°/s Max vel: 500°/s
         profile = new TrapezoidalMotionProfile(50, 500);
-        position = INTAKING;
+        profileStartPosition = INTAKING;
         runMode = TELE;
     }
 
@@ -69,21 +69,21 @@ public class Arm implements Subsystem {
                 rightArm.setPosition(toServoPosition(target));
                 break;
             case TELE:
-                //if(this.position != target){
-                oldPosition = position;
-                position = target;
-                travel = target - oldPosition;
-                startTime = System.currentTimeMillis();
+                if(target != profileTargetPosition) {
+                    profileStartPosition = leftArm.getPosition();
+                    profileTargetPosition = target;
+                    profileTravelDistance = profileTargetPosition - profileStartPosition;
+                    profileStartTime = System.currentTimeMillis();
+                }
         }
     }
 
     public void updateArms(){
-        //goTo = toServoPosition(profile.motion_profile(travel, (System.currentTimeMillis() - startTime))/1000);
-        goTo = toServoPosition(profile.motion_profile(travel, (System.currentTimeMillis() - startTime))/1000);
+        goTo = profile.motion_profile(Math.abs(profileTravelDistance), (System.currentTimeMillis() - profileStartTime)/1000);
+        goTo = toServoPosition(Math.signum(profileTravelDistance) * goTo.doubleValue() + profileStartPosition);
         //if(goTo.isNaN()) goTo = 0.0;
-        //goTo += toServoPosition(position - travel);
-        rightArm.setPosition(goTo.doubleValue() + toServoPosition(oldPosition));
-        leftArm.setPosition(goTo.doubleValue() + toServoPosition(oldPosition));
+        rightArm.setPosition(goTo);
+        leftArm.setPosition(goTo);
     }
 
     public double toServoPosition(double angle){
@@ -95,6 +95,6 @@ public class Arm implements Subsystem {
     public double toAxonPosition(double angle) { return (angle/(360*5))*0.85;}
 
     public String armReport(){
-        return goTo.toString() + " " + oldPosition + " " + travel + " " + (System.currentTimeMillis() - startTime)/1000;
+        return goTo.toString() + " " + profileStartPosition + " " + profileTravelDistance + " " + (System.currentTimeMillis() - profileStartTime)/1000;
     }
 }
