@@ -234,7 +234,7 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addData("Looptime: ", loopTime);
         telemetry.addData("Multiplier: ", multiplier);
         telemetry.addData("Voltage: ", voltageReader.getVoltage());
-        telemetry.addData("Arm Report: ", bot.arm.armReport());
+        //telemetry.addData("Arm Report: ", bot.arm.armReport());
     }
 
     @Override
