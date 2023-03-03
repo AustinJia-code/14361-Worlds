@@ -6,11 +6,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys.*;
 import com.qualcomm.hardware.lynx.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import static org.firstinspires.ftc.teamcode.commands.State.*;
 
 import org.firstinspires.ftc.teamcode.commands.VoltageReader;
-import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import java.util.*;
 
@@ -48,7 +48,10 @@ public abstract class BasedAbstract extends OpMode {
 
         voltageReader = new VoltageReader(hardwareMap);
 
-        //for(LynxModule hub : allHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         driver = new GamepadEx(gamepad1);   // drives the drivetrain
         operator = new GamepadEx(gamepad2); // controls the scoring systems
@@ -127,6 +130,10 @@ public abstract class BasedAbstract extends OpMode {
             bot = new Robot(hardwareMap, telemetry);
         }
 
+        if(driver.wasJustPressed(Button.LEFT_BUMPER)){
+            bot.claw.TSEOpen();
+        }
+
         // ---------------------------- OPERATOR CODE ---------------------------- //
         bot.slide.powerSlides();
         bot.arm.updateArms();
@@ -184,6 +191,14 @@ public abstract class BasedAbstract extends OpMode {
 
         if(operator.wasJustPressed(Button.X)){
             bot.claw.actuate();
+        }
+
+        if(operator.wasJustPressed(Button.B)){
+            bot.arm.setPosition(LIFTED);
+        }
+
+        if(operator.wasJustReleased(Button.B)){
+            bot.arm.setPosition(INTAKING);
         }
 
         if(operator.gamepad.touchpad_finger_1_x < 0 && operator.gamepad.touchpad_finger_1_y > 0 && operator.gamepad.touchpad_finger_1){

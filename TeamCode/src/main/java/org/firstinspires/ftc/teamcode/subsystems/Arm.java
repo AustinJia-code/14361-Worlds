@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.commands.*;
 
 public class Arm implements Subsystem {
     private Servo leftArm, rightArm;
-    private double INTAKING = 5, GROUND = 5, SCORING = 182, BACKWARDS = 295, LEVEL = 210, VERTICAL = 130;
+    private double INTAKING = 5, GROUND = 5, LIFTED = 45, SCORING = 182, BACKWARDS = 295, LEVEL = 210, VERTICAL = 130;
     private double update = 0.05;
     private double profileStartTime;
     private double profileTargetPosition = 5, profileStartPosition = 5;
@@ -30,7 +30,7 @@ public class Arm implements Subsystem {
         //Max accel: 100°/s Max vel: 500°/s
         profile = new TrapezoidalMotionProfile(50, 500);
         profileStartPosition = INTAKING;
-        runMode = TELE;
+        runMode = RunMode.TELE;
     }
 
     public void setAutoPositions(int pos){
@@ -53,6 +53,9 @@ public class Arm implements Subsystem {
                 break;
             case BACKWARDS:
                 setArms(BACKWARDS);
+                break;
+            case LIFTED:
+                setArms(LIFTED);
                 break;
             default:
                 setArms(SCORING);
