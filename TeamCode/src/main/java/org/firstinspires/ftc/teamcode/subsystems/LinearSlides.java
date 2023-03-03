@@ -52,6 +52,7 @@ public class LinearSlides implements Subsystem {
 
     public void setPosition(State state){
         switch(state){
+            case LIFTED:
             case INTAKING:
                 setTarget(INTAKE+offset);
                 break;
@@ -70,6 +71,8 @@ public class LinearSlides implements Subsystem {
             case HIGH:
                 setTarget(HIGH+offset);
                 break;
+            default:
+                setTarget(INTAKE+offset);
         }
     }
 

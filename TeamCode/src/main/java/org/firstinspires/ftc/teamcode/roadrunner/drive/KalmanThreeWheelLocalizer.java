@@ -19,9 +19,11 @@ public class KalmanThreeWheelLocalizer extends StandardTrackingWheelLocalizer {
             headingFilter,
             wheelPos1Filter,
             wheelPos2Filter,
+            wheelPos3Filter,
             headingVelocityFilter,
             wheelPos1VelocityFilter,
-            wheelPos2VelocityFilter;
+            wheelPos2VelocityFilter,
+            wheelPos3VelocityFilter;
 
     public KalmanThreeWheelLocalizer(HardwareMap hardwareMap) {
         super(hardwareMap);
@@ -30,9 +32,11 @@ public class KalmanThreeWheelLocalizer extends StandardTrackingWheelLocalizer {
         headingVelocityFilter = new KalmanFilter(0.500, 0.225);
         wheelPos1Filter = new KalmanFilter(9, 11);
         wheelPos2Filter = new KalmanFilter(9, 11);
+        wheelPos3Filter = new KalmanFilter(9, 11);
 
         wheelPos1VelocityFilter = new KalmanFilter(8, 7);
         wheelPos2VelocityFilter = new KalmanFilter(8, 7);
+        wheelPos3VelocityFilter = new KalmanFilter(8, 7);
     }
 
     public double getHeading() {
@@ -43,13 +47,13 @@ public class KalmanThreeWheelLocalizer extends StandardTrackingWheelLocalizer {
     @Override
     public List<Double> getWheelPositions() {
         List<Double> in = super.getWheelPositions();
-        return Arrays.asList(wheelPos1Filter.filter(in.get(0)), wheelPos2Filter.filter(in.get(1)));
+        return Arrays.asList(wheelPos1Filter.filter(in.get(0)), wheelPos2Filter.filter(in.get(1)), wheelPos3Filter.filter(in.get(2)));
     }
 
     @NonNull
     @Override
     public List<Double> getWheelVelocities() {
         List<Double> in = super.getWheelVelocities();
-        return Arrays.asList(wheelPos1VelocityFilter.filter(in.get(0)), wheelPos2VelocityFilter.filter(in.get(1)));
+        return Arrays.asList(wheelPos1VelocityFilter.filter(in.get(0)), wheelPos2VelocityFilter.filter(in.get(1)), wheelPos3VelocityFilter.filter(in.get(2)));
     }
 }

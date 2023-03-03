@@ -39,6 +39,7 @@ public class Claw implements Subsystem {
 
     public void setPosition(State state){
         switch(state){
+            case LIFTED:
             case INTAKING:
                 open();
                 pronate();

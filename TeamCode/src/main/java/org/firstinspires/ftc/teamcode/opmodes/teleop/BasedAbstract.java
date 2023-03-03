@@ -163,7 +163,8 @@ public abstract class BasedAbstract extends OpMode {
             }
         }
         if(operator.wasJustPressed(Button.LEFT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
-            bot.setPosition(BACKWARDS);
+            if(bot.getState() == INTAKING) bot.setPosition(LIFTED);
+            if(bot.getState() == LIFTED) bot.setPosition(BACKWARDS);
         }
         if(operator.wasJustReleased(Button.LEFT_BUMPER)){                            // Left Bumper = Closes Claw, Goes to Ground
             bot.claw.close();
@@ -194,7 +195,10 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         if(operator.wasJustPressed(Button.B)){
-            bot.arm.setPosition(LIFTED);
+            bot.claw.TSEOpen();
+        }
+        if(operator.wasJustReleased(Button.B)){
+            bot.claw.close();
         }
 
         if(operator.wasJustReleased(Button.B)){
