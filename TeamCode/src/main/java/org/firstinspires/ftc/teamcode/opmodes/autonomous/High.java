@@ -49,6 +49,11 @@ public abstract class High extends LinearOpMode {
         bot.claw.close();
         bot.arm.setAutoPositions(182);
 
+        DriveConstants.MAX_VEL = 45;
+        DriveConstants.MAX_ACCEL = 45;
+        DriveConstants.MAX_ANG_VEL = Math.toRadians(90);
+        DriveConstants.MAX_ANG_ACCEL = Math.toRadians(90);
+
         build();
 
         setCameraPosition();
