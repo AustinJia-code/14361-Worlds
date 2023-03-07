@@ -64,7 +64,7 @@ public class Claw implements Subsystem {
     }
 
     public void TSEOpen(){
-        claw.setPosition(toServoPosition(165));
+        claw.setPosition(toServoPosition(154));
         open = true;
     }
 

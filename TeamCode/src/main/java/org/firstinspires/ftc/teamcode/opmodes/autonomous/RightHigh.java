@@ -44,7 +44,7 @@ public class RightHigh extends High {
 
         ScoreToStorage1 = ScoreToStorage(ScorePreload, -1, -1, 0);
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage);
-        StorageToScore1 = StorageToScore(WaitAtStorage1, 0.9, 3.8, 0, true);
+        StorageToScore1 = StorageToScore(WaitAtStorage1, 0.9, 3.8, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore);
 
         ScoreToStorage2 = ScoreToStorage(WaitAtScore2, -0.5, -0.5, 0);

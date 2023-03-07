@@ -20,7 +20,7 @@ import org.opencv.core.*;
 import org.openftc.easyopencv.*;
 
 @Config
-public abstract class High extends LinearOpMode {
+public abstract class SafeHigh extends LinearOpMode {
 
     Robot bot;
     SampleMecanumDrive drive;
@@ -167,15 +167,15 @@ public abstract class High extends LinearOpMode {
                     bot.arm.setPosition(State.INTAKING);
                     bot.claw.setPosition(State.INTAKING);
                 })
-                .addTemporalMarker(1.7, () -> {
+                .addTemporalMarker(2.1, () -> {
                     bot.claw.close();
                 })
-                .addTemporalMarker(1.85, () -> {
+                .addTemporalMarker(2.25, () -> {
                     bot.slide.setPosition(State.MIDDLE);
                     bot.slide.lilHigher();
                 })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
-                .forward(1.5)
+                .forward(25.5)
                 .build();
     }
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
@@ -183,7 +183,7 @@ public abstract class High extends LinearOpMode {
                 .addTemporalMarker(0.2, ()->{
                     bot.arm.setPosition(State.HIGH);
                 })
-                .addTemporalMarker(0.3, ()->{
+                .addTemporalMarker(0.7, ()->{
                     bot.setPosition(State.HIGH);
                 })
                 /*
@@ -191,11 +191,11 @@ public abstract class High extends LinearOpMode {
                     bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
                 })
                 */
-                .addTemporalMarker(2, () -> {
+                .addTemporalMarker(2.4, () -> {
                     bot.slide.setPosition(State.MIDDLE);
                     bot.arm.slamThatJawn();
                 })
-                .back(1.5)
+                .back(35.5)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
                 .build();
     }

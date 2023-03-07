@@ -25,8 +25,8 @@ public abstract class BasedAbstract extends OpMode {
     int alliance;
     int loop;
     double multiplier;
-    private boolean curRT, oldRT;
-    //List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+    private boolean curRT, oldRT, tilt;
+    List<LynxModule> allHubs;
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
 
@@ -48,10 +48,11 @@ public abstract class BasedAbstract extends OpMode {
 
         voltageReader = new VoltageReader(hardwareMap);
 
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+        tilt = true;
 
         driver = new GamepadEx(gamepad1);   // drives the drivetrain
         operator = new GamepadEx(gamepad2); // controls the scoring systems
@@ -70,16 +71,18 @@ public abstract class BasedAbstract extends OpMode {
     @Override
     public void loop() {
 
+
         multiplier = 1;
 
         if(loop++ == 100000) loop = 0;
+
+
 
         double startTime = System.currentTimeMillis();
 
         // ---------------------------- LOOPING ---------------------------- //
         driver.readButtons();
         operator.readButtons();
-
 
         // ---------------------------- DRIVER CODE ---------------------------- //
         double desiredSpeed = 0;
@@ -102,11 +105,6 @@ public abstract class BasedAbstract extends OpMode {
 
         bot.drivetrain.setSpeed(desiredSpeed);
 
-        /*
-        if(driver.wasJustPressed(Button.LEFT_BUMPER)){
-            bot.claw.setAutoDrop();
-        }
-        */
 
         if(driver.getButton(Button.RIGHT_BUMPER)){
             bot.claw.open();
@@ -130,16 +128,20 @@ public abstract class BasedAbstract extends OpMode {
             bot = new Robot(hardwareMap, telemetry);
         }
 
+        if(driver.wasJustPressed(Button.A)){
+            tilt = !tilt;
+        }
+
         if(driver.wasJustPressed(Button.LEFT_BUMPER)){
             bot.claw.TSEOpen();
         }
 
         // ---------------------------- OPERATOR CODE ---------------------------- //
         bot.slide.powerSlides();
-        bot.arm.updateArms();
 
         if(operator.wasJustPressed(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
-            bot.setPosition(INTAKING);
+            if(bot.getState() == BACKWARDS) bot.setPosition(LIFTED);
+            else bot.setPosition(INTAKING);
         }
         if(operator.isDown(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
             bot.claw.intakeUpdate();
@@ -164,7 +166,8 @@ public abstract class BasedAbstract extends OpMode {
         }
         if(operator.wasJustPressed(Button.LEFT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
             if(bot.getState() == INTAKING) bot.setPosition(LIFTED);
-            if(bot.getState() == LIFTED) bot.setPosition(BACKWARDS);
+            else if(bot.getState() == BACKWARDS || bot.getState() == LIFTED || bot.getState() == LOW) bot.setPosition(BACKWARDS);
+            else bot.setPosition(LOW);
         }
         if(operator.wasJustReleased(Button.LEFT_BUMPER)){                            // Left Bumper = Closes Claw, Goes to Ground
             bot.claw.close();
@@ -201,10 +204,6 @@ public abstract class BasedAbstract extends OpMode {
             bot.claw.close();
         }
 
-        if(operator.wasJustReleased(Button.B)){
-            bot.arm.setPosition(INTAKING);
-        }
-
         if(operator.gamepad.touchpad_finger_1_x < 0 && operator.gamepad.touchpad_finger_1_y > 0 && operator.gamepad.touchpad_finger_1){
             bot.setPosition(INTAKING);
             bot.claw.open();
@@ -230,6 +229,7 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         bot.claw.outtakeUpdate(bot.getState(), driver.gamepad, operator.gamepad, loop);
+        if(!tilt) bot.claw.outtake();
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
         double loopTime = System.currentTimeMillis() -startTime;

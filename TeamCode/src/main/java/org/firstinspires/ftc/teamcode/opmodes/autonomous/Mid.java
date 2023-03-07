@@ -179,13 +179,9 @@ public abstract class Mid extends LinearOpMode {
                 .addTemporalMarker(0, () -> {
                     bot.slide.setPosition(State.HIGH);
                     bot.arm.setPosition(State.HIGH);
-                    //bot.slide.incrementSlides(200);
                 })
                 .addTemporalMarker(0.7, () -> {
                     bot.setPosition(State.MIDDLE);
-                })
-                .addTemporalMarker(1.7, () -> {
-                    //bot.claw.outtakeUpdate(State.MIDDLE, gamepad1, gamepad2, 10);
                 })
                 .addTemporalMarker(2.0, () -> {
                     bot.slide.incrementSlides(-500);

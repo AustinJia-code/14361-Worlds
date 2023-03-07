@@ -42,7 +42,7 @@ public class LeftHigh extends High {
 
         ScoreToStorage1 = ScoreToStorage(ScorePreload, 1, 0, 0);
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage);
-        StorageToScore1 = StorageToScore(WaitAtStorage1, 0.35, 0, 0, true);
+        StorageToScore1 = StorageToScore(WaitAtStorage1, 0.35, 0, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore);
 
         ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, 0, 0);

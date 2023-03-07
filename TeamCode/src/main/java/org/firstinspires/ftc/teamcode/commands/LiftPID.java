@@ -69,6 +69,9 @@ public class LiftPID {
         else if (position - target > 100) return -0.75;
         else if (position - target > 0) return -0.5;
          */
+        if((position > target) && (target < 300)) setP(10);
+        else setP(3);
+
         return getCorrection((target-position)/max);
     }
 
