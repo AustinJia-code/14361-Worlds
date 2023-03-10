@@ -137,7 +137,6 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         // ---------------------------- OPERATOR CODE ---------------------------- //
-        bot.slide.powerSlides();
 
         if(operator.wasJustPressed(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
             if(bot.getState() == BACKWARDS) bot.setPosition(LIFTED);
@@ -228,8 +227,8 @@ public abstract class BasedAbstract extends OpMode {
             bot.slide.setTwo();
         }
 
-        bot.claw.outtakeUpdate(bot.getState(), driver.gamepad, operator.gamepad, loop);
-        if(!tilt) bot.claw.outtake();
+        if(tilt && bot.getState() != INTAKING && bot.getState() != BACKWARDS) bot.claw.outtakeUpdate(bot.getState(), driver.gamepad, operator.gamepad, loop);
+        bot.slide.powerSlides();
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
         double loopTime = System.currentTimeMillis() -startTime;
@@ -238,7 +237,7 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addData("Looptime: ", loopTime);
         telemetry.addData("Multiplier: ", multiplier);
         telemetry.addData("Voltage: ", voltageReader.getVoltage());
-        //telemetry.addData("Arm Report: ", bot.arm.armReport());
+        telemetry.addData("Tilt: ", tilt);
     }
 
     @Override

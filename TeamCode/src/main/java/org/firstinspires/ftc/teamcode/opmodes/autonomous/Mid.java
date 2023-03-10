@@ -76,61 +76,61 @@ public abstract class Mid extends LinearOpMode {
         //Score 1+0
         drive.followTrajectorySequence(ScorePreload);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore1);
+        //drive.followTrajectorySequence(WaitAtScore1);
 
         //Intake from five
         bot.slide.setFive();
         drive.followTrajectorySequence(ScoreToStorage1);
         bot.claw.close();
-        drive.followTrajectorySequence(WaitAtStorage1);
+        //drive.followTrajectorySequence(WaitAtStorage1);
 
         //Score 1+1
         drive.followTrajectorySequence(StorageToScore1);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore2);
+        //drive.followTrajectorySequence(WaitAtScore2);
 
         //Intake from four
         bot.slide.setFour();
         drive.followTrajectorySequence(ScoreToStorage2);
         bot.claw.close();
-        drive.followTrajectorySequence(WaitAtStorage2);
+       // drive.followTrajectorySequence(WaitAtStorage2);
 
         //Score 1+2
         drive.followTrajectorySequence(StorageToScore2);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore3);
+        //.followTrajectorySequence(WaitAtScore3);
 
         //Intake from three
         bot.slide.setThree();
         drive.followTrajectorySequence(ScoreToStorage3);
         bot.claw.close();
-        drive.followTrajectorySequence(WaitAtStorage3);
+        //drive.followTrajectorySequence(WaitAtStorage3);
 
         //Score 1+3
         drive.followTrajectorySequence(StorageToScore3);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore4);
+        //drive.followTrajectorySequence(WaitAtScore4);
 
         //Intake from two
         bot.slide.setTwo();
         drive.followTrajectorySequence(ScoreToStorage4);
         bot.claw.close();
-        drive.followTrajectorySequence(WaitAtStorage4);
+        //drive.followTrajectorySequence(WaitAtStorage4);
 
         //Score 1+4
         drive.followTrajectorySequence(StorageToScore4);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore5);
+        //drive.followTrajectorySequence(WaitAtScore5);
 
         //Intake from one
-        //bot.slide.setOne();
-        //drive.followTrajectorySequence(ScoreToStorage5);
-        //bot.claw.close();
+        bot.slide.setOne();
+        drive.followTrajectorySequence(ScoreToStorage5);
+        bot.claw.close();
         //drive.followTrajectorySequence(WaitAtStorage5);
 
         //Score 1+5
-        //drive.followTrajectorySequence(StorageToScore5);
-        //bot.claw.open();
+        drive.followTrajectorySequence(StorageToScore5);
+        bot.claw.open();
         //drive.followTrajectorySequence(WaitAtScore6);
 
         bot.setPosition(State.INTAKING);
@@ -152,7 +152,17 @@ public abstract class Mid extends LinearOpMode {
 
 
     }
-    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time){
+    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time, boolean lift){
+        if(lift){
+            return drive.trajectorySequenceBuilder(preceding.end())
+                    .addTemporalMarker(0, () -> {
+                        bot.slide.setPosition(State.MIDDLE);
+                        bot.slide.lilHigher();
+                        bot.arm.setPosition(State.HIGH);
+                    })
+                    .waitSeconds(time)
+                    .build();
+        }
         return drive.trajectorySequenceBuilder(preceding.end())
                 .waitSeconds(time)
                 .build();
@@ -165,7 +175,7 @@ public abstract class Mid extends LinearOpMode {
                     bot.arm.setPosition(State.INTAKING);
                     bot.claw.setPosition(State.INTAKING);
                 })
-                .addTemporalMarker(1.9, () -> {
+                .addTemporalMarker(1.8, () -> {
                     bot.claw.close();
                 })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
@@ -175,9 +185,7 @@ public abstract class Mid extends LinearOpMode {
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
                 .setReversed(true)
-                .waitSeconds(0.5)
                 .addTemporalMarker(0, () -> {
-                    bot.slide.setPosition(State.HIGH);
                     bot.arm.setPosition(State.HIGH);
                 })
                 .addTemporalMarker(0.7, () -> {

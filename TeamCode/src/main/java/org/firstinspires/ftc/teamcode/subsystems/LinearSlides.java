@@ -18,7 +18,7 @@ public class LinearSlides implements Subsystem {
 
     private LiftPID leftPID, rightPID;
     private int HIGH = spoolChange(1390), MIDDLE = spoolChange(620), LOW = 0, INTAKE = 0;
-    private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = -10;
+    private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
     int target;
 
@@ -101,8 +101,8 @@ public class LinearSlides implements Subsystem {
                 rightPID.setTarget(position);
                 leftPID.setTarget(position);
             case POSITION:
-                rightSlide.setTargetPosition(position+40);
-                leftSlide.setTargetPosition(position+40);
+                rightSlide.setTargetPosition(position);
+                leftSlide.setTargetPosition(position);
         }
     }
 
@@ -114,7 +114,7 @@ public class LinearSlides implements Subsystem {
     }
 
     public void setModeToPosition(){
-        HIGH = spoolChange(1410); MIDDLE = spoolChange(640); LOW = spoolChange(95); INTAKE = spoolChange(95);
+        HIGH = spoolChange(1410); MIDDLE = spoolChange(675); LOW = spoolChange(95); INTAKE = spoolChange(95);
         mode = Mode.POSITION;
         rightSlide.setTargetPosition(0);
         leftSlide.setTargetPosition(0);
@@ -123,8 +123,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
 
-        rightSlide.setPower(1);
-        leftSlide.setPower(1);
+        rightSlide.setPower(0.8);
+        leftSlide.setPower(0.8);
     }
 
     public void customScoringPositions(int HIGH, int MIDDLE){

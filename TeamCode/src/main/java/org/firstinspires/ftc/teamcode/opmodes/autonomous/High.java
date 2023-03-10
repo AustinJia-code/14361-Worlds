@@ -74,9 +74,7 @@ public abstract class High extends LinearOpMode {
     public abstract void build();
     public void execute(TSEPosition position){
         camera.closeCameraDevice();
-        bot.arm.setArms(192);
-        bot.arm.setArms(192);
-
+        bot.arm.setPosition(State.HIGH);
         //Score 1+0
         drive.followTrajectorySequence(ScorePreload);
         bot.claw.open();
@@ -85,7 +83,6 @@ public abstract class High extends LinearOpMode {
         //Intake from five
         bot.slide.setFive();
         drive.followTrajectorySequence(ScoreToStorage1);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage1);
 
         //Score 1+1
@@ -96,7 +93,6 @@ public abstract class High extends LinearOpMode {
         //Intake from four
         bot.slide.setFour();
         drive.followTrajectorySequence(ScoreToStorage2);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage2);
 
         //Score 1+2
@@ -107,7 +103,6 @@ public abstract class High extends LinearOpMode {
         //Intake from three
         bot.slide.setThree();
         drive.followTrajectorySequence(ScoreToStorage3);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage3);
 
         //Score 1+3
@@ -118,7 +113,6 @@ public abstract class High extends LinearOpMode {
         //Intake from two
         bot.slide.setTwo();
         drive.followTrajectorySequence(ScoreToStorage4);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage4);
 
         //Score 1+4
@@ -129,7 +123,6 @@ public abstract class High extends LinearOpMode {
         //Intake from one
         bot.slide.setOne();
         drive.followTrajectorySequence(ScoreToStorage5);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage5);
 
         //Score 1+5
@@ -154,14 +147,26 @@ public abstract class High extends LinearOpMode {
         }
         bot.slide.setOne();
     }
-    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time){
-        return drive.trajectorySequenceBuilder(preceding.end())
-                .waitSeconds(time)
-                .build();
+    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time, boolean lift){
+        if(lift) {
+            return drive.trajectorySequenceBuilder(preceding.end())
+                    .addTemporalMarker(0, () -> {
+                        bot.slide.setPosition(State.MIDDLE);
+                        bot.slide.lilHigher();
+                    })
+                    .waitSeconds(time)
+                    .build();
+        }
+        else{
+            return drive.trajectorySequenceBuilder(preceding.end())
+                    .waitSeconds(time)
+                    .build();
+        }
 
     }
     public TrajectorySequence ScoreToStorage(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {
                     bot.arm.setPosition(State.INTAKING);
@@ -170,20 +175,17 @@ public abstract class High extends LinearOpMode {
                 .addTemporalMarker(1.7, () -> {
                     bot.claw.close();
                 })
-                .addTemporalMarker(1.85, () -> {
-                    bot.slide.setPosition(State.MIDDLE);
-                    bot.slide.lilHigher();
-                })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
-                .forward(1.5)
+                .forward(11.5)
                 .build();
     }
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
-                .addTemporalMarker(0.2, ()->{
-                    bot.arm.setPosition(State.HIGH);
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
+                .addTemporalMarker(0, ()->{
+                    bot.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(0.3, ()->{
+                .addTemporalMarker(1.2, ()->{
                     bot.setPosition(State.HIGH);
                 })
                 /*
@@ -192,10 +194,10 @@ public abstract class High extends LinearOpMode {
                 })
                 */
                 .addTemporalMarker(2, () -> {
-                    bot.slide.setPosition(State.MIDDLE);
                     bot.arm.slamThatJawn();
+                    bot.slide.setPosition(State.MIDDLE);
                 })
-                .back(1.5)
+                .back(11.5)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
                 .build();
     }

@@ -59,7 +59,7 @@ public class Claw implements Subsystem {
     }
 
     public void close(){
-        claw.setPosition(toServoPosition(122));
+        claw.setPosition(toServoPosition(125));
         open = false;
     }
 
@@ -96,11 +96,14 @@ public class Claw implements Subsystem {
     }
 
     public void outtake(){
+        /*
         if(!flipped) {
             supinate();
         }else{
             pronate();
         }
+        */
+        supinate();
     }   //scoring
 
     public void flip() {
@@ -110,12 +113,12 @@ public class Claw implements Subsystem {
     }
 
     public void setLeft(){
-        wrist.setPosition(toServoPosition(wristAngle+27));
+        wrist.setPosition(toServoPosition(supinatedAngle+27));
         pronated = false;
     }
 
     public void setRight(){
-        wrist.setPosition(toServoPosition(wristAngle-27));
+        wrist.setPosition(toServoPosition(supinatedAngle-27));
         pronated = false;
     }
 
