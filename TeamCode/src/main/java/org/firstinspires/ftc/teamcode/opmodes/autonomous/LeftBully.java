@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 //
-@Autonomous(name = "\uD83D\uDDFF Left High \uD83D\uDDFF", group = "Final")
-public class LeftHigh extends High {
+@Autonomous(name = "\uD83D\uDDFF Left Bully \uD83D\uDDFF", group = "Final")
+public class LeftBully extends High {
 
     private double waitAtStorage = 0.2;
     private double waitAtScore = 0.1;
@@ -19,8 +19,8 @@ public class LeftHigh extends High {
     public static Pose2d PARK_RIGHT = new Pose2d(-8, -16, toRadians(-90));
 
     public void build(){
-        SCORING_POSITION = new Pose2d(-27.25,-5.75, toRadians(45));
-        STORAGE_POSITION = new Pose2d(-49.1, -14.25, toRadians(180));
+        SCORING_POSITION = new Pose2d(-26.25,-4, toRadians(45));
+        STORAGE_POSITION = new Pose2d(-49.1, -15.1, toRadians(180));
 
         drive.setPoseEstimate(INIT);
         bot.claw.close();
@@ -35,7 +35,7 @@ public class LeftHigh extends High {
                     bot.arm.slamThatJawn();
                 })
                 .back(34)
-                .splineTo(new Vector2d(SCORING_POSITION.getX()-1, SCORING_POSITION.getY()-1.5), SCORING_POSITION.getHeading())
+                .splineTo(new Vector2d(SCORING_POSITION.getX()-1, SCORING_POSITION.getY()-1), SCORING_POSITION.getHeading())
                 .resetConstraints()
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);

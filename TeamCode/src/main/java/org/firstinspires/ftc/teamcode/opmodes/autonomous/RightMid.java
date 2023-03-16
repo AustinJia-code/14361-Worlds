@@ -15,44 +15,37 @@ public class RightMid extends Mid {
     private double waitAtStorage = 0;
     private double waitAtScore = 0;
     public static Pose2d INIT = new Pose2d(35.5, -62.5, toRadians(-90));
-    public static Pose2d PARK_LEFT = new Pose2d(13 , -13, toRadians(180));
-    public static Pose2d PARK_MIDDLE = new Pose2d(35, -12, toRadians(0));
+    public static Pose2d PARK_LEFT = new Pose2d(13, -13, toRadians(180));
+    public static Pose2d PARK_MIDDLE = new Pose2d(37, -12, toRadians(0));
     public static Pose2d PARK_RIGHT = new Pose2d(60, -12.5, toRadians(0));
 
     public void build(){
         SCORING_POSITION = new Pose2d(29.25,-17.25, toRadians(225));
-        STORAGE_POSITION = new Pose2d(49.6, -9, toRadians(0));
+        STORAGE_POSITION = new Pose2d(51.2, -10.25, toRadians(0));
 
         drive.setPoseEstimate(INIT);
         bot.claw.close();
 
         ScorePreload = drive.trajectorySequenceBuilder(INIT)
-                .addTemporalMarker(0, () -> bot.setPosition(State.HIGH))
-                .addTemporalMarker(0, () -> bot.slide.setTarget(LinearSlides.spoolChange(1420)))
-                .addTemporalMarker(2.6, () -> {
-                    //bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
+                .setConstraints(Constrainer.vel(50), Constrainer.accel(50))
+                .setTurnConstraint(Math.toRadians(120), Math.toRadians(120))
+                .addTemporalMarker(1, () -> {
+                    bot.setPosition(State.HIGH);
                 })
-                .addTemporalMarker(3.3, () -> {
-                    bot.slide.incrementSlides(-1);
+                .addTemporalMarker(2, () -> {
+                    bot.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(4.6, () -> {
                     bot.arm.slamThatJawn();
                 })
-                .back(39)
-                .splineTo(new Vector2d(6.5,-19.1), Math.toRadians(215))
+                .back(50)
+                .turn(Math.toRadians(130))
+                .back(8)
+                .resetConstraints()
                 .build();
         //WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = drive.trajectorySequenceBuilder(ScorePreload.end())
-                .setReversed(false)
-                .addTemporalMarker(0.35, () -> {
-                    bot.arm.setPosition(State.INTAKING);
-                    bot.claw.setPosition(State.INTAKING);
-                })
-                .addTemporalMarker(2.15, () -> {
-                    bot.claw.close();
-                })
-                .splineTo(new Vector2d(35,-10), Math.toRadians(0))
-                .forward(27.5)
-                .build();
+        ScoreToStorage1 = ScoreToStorage(ScorePreload, 0, 0, 0);
 
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(ScoreToStorage1, 0, 0.5, 0);
@@ -84,6 +77,8 @@ public class RightMid extends Mid {
                 .addTemporalMarker(1, () -> {
                     bot.setPosition(State.INTAKING);
                 })
+                .turn(Math.toRadians(-100))
+                .waitSeconds(1)
                 .build();
         ParkLeft = drive.trajectorySequenceBuilder(StorageToScore5.end())
                 .setReversed(false)
@@ -91,13 +86,16 @@ public class RightMid extends Mid {
                 .addTemporalMarker(1, () -> {
                     bot.setPosition(State.INTAKING);
                 })
+                .turn(Math.toRadians(90))
+                .waitSeconds(1)
                 .build();
         ParkRight = drive.trajectorySequenceBuilder(StorageToScore5.end())
                 .setReversed(false)
                 .splineTo(PARK_RIGHT.vec(), 0)
                 .addTemporalMarker(1, () -> {
-                    bot.setPosition(State.INTAKING);
+                    bot.setPosition(State.BACKWARDS);
                 })
+                .waitSeconds(1)
                 .build();
     }
 

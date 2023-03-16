@@ -7,16 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 
 import static org.firstinspires.ftc.teamcode.commands.SleeveDetection.*;
 
-import static java.lang.Math.toRadians;
-
-import android.media.tv.TvView;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.*;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.*;
-import org.opencv.core.*;
 import org.openftc.easyopencv.*;
 
 @Config
@@ -172,7 +167,7 @@ public abstract class SafeHigh extends LinearOpMode {
                 })
                 .addTemporalMarker(2.25, () -> {
                     bot.slide.setPosition(State.MIDDLE);
-                    bot.slide.lilHigher();
+                    bot.slide.midLilHigher();
                 })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
                 .forward(25.5)

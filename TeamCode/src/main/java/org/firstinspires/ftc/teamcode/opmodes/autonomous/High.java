@@ -7,16 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 
 import static org.firstinspires.ftc.teamcode.commands.SleeveDetection.*;
 
-import static java.lang.Math.toRadians;
-
-import android.media.tv.TvView;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.*;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.*;
-import org.opencv.core.*;
 import org.openftc.easyopencv.*;
 
 @Config
@@ -152,7 +147,7 @@ public abstract class High extends LinearOpMode {
             return drive.trajectorySequenceBuilder(preceding.end())
                     .addTemporalMarker(0, () -> {
                         bot.slide.setPosition(State.MIDDLE);
-                        bot.slide.lilHigher();
+                        bot.slide.midLilHigher();
                     })
                     .waitSeconds(time)
                     .build();

@@ -47,7 +47,7 @@ public class LinearSlides implements Subsystem {
 
         setPosition(INTAKING);
 
-        update = 50;
+        update = 20;
     }
 
     public void setPosition(State state){
@@ -76,7 +76,7 @@ public class LinearSlides implements Subsystem {
         }
     }
 
-    public void lilHigher(){
+    public void midLilHigher(){
         setTarget(MIDDLE+100);
     }
 
@@ -85,7 +85,7 @@ public class LinearSlides implements Subsystem {
             case POWER:
                 if (Math.abs(input) > 0.01) {
                     setTarget(
-                            Range.clip(rightPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, 1650 + offset)
+                            Range.clip(leftPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
                     );
                 }
                 break;
@@ -107,7 +107,7 @@ public class LinearSlides implements Subsystem {
     }
 
     public void powerSlides(){
-        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition());
+        double power = leftPID.getCorrectionPosition(leftSlide.getCurrentPosition());
 
         rightSlide.setPower(power);
         leftSlide.setPower(power);

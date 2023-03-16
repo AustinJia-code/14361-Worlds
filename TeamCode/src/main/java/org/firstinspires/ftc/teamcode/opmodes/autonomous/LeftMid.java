@@ -19,7 +19,7 @@ public class LeftMid extends Mid {
 
     public void build(){
         SCORING_POSITION = new Pose2d(-28.25,-17.75, toRadians(-45));
-        STORAGE_POSITION = new Pose2d(-51.25, -12.5, toRadians(180));
+        STORAGE_POSITION = new Pose2d(-51.6, -12.5, toRadians(180));
 
         drive.setPoseEstimate(INIT);
         bot.claw.close();
@@ -72,6 +72,7 @@ public class LeftMid extends Mid {
                 .addTemporalMarker(0.2, () -> {
                     bot.setPosition(State.INTAKING);
                 })
+                .waitSeconds(1)
                 .build();
         ParkLeft = drive.trajectorySequenceBuilder(WaitAtScore5.end())
                 .setReversed(false)
@@ -80,6 +81,7 @@ public class LeftMid extends Mid {
                 .addTemporalMarker(0.2, () -> {
                     bot.setPosition(State.INTAKING);
                 })
+                .waitSeconds(1)
                 .build();
         ParkRight = drive.trajectorySequenceBuilder(WaitAtScore5.end())
                 .setReversed(false)
@@ -88,6 +90,7 @@ public class LeftMid extends Mid {
                 .addTemporalMarker(0.2, () -> {
                     bot.setPosition(State.INTAKING);
                 })
+                .waitSeconds(1)
                 .build();
     }
 
