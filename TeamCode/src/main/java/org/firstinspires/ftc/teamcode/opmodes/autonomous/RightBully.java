@@ -21,7 +21,7 @@ public class RightBully extends High {
     public static Pose2d PARK_RIGHT = new Pose2d(58, -12, toRadians(0));
 
     public void build(){
-        SCORING_POSITION = new Pose2d(23,-6, toRadians(135));
+        SCORING_POSITION = new Pose2d(25,-6, toRadians(135));
         STORAGE_POSITION = new Pose2d(47.5, -11, toRadians(0));
 
         drive.setPoseEstimate(INIT);
@@ -38,7 +38,7 @@ public class RightBully extends High {
                     bot.arm.slamThatJawn();
                 })
                 .back(34)
-                .splineTo(new Vector2d(SCORING_POSITION.getX()-0.75, SCORING_POSITION.getY()+1), SCORING_POSITION.getHeading())
+                .splineTo(new Vector2d(SCORING_POSITION.getX()-2.75, SCORING_POSITION.getY()+1), SCORING_POSITION.getHeading())
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
@@ -57,12 +57,12 @@ public class RightBully extends High {
         StorageToScore3 = StorageToScore(WaitAtStorage3, 1, 5.5, 0);
         WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, -1.25, 1.5, 0);
+        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, -1.25, 1, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
         StorageToScore4 = StorageToScore(WaitAtStorage4, 1.5, 6.0, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, -1.25, 2.5, 0);
+        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, -1.25, 2, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(WaitAtStorage5, 1.5, 7.5 , 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);

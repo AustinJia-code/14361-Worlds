@@ -7,6 +7,7 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.SleeveDetection.*;
 
 //UNTUNED
+@Disabled
 @Autonomous(name = "ඞ Vent ඞ", group = "Final")
 public class ParkOnly extends High {
 

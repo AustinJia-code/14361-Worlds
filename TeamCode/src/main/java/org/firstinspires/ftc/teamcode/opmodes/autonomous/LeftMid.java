@@ -19,7 +19,7 @@ public class LeftMid extends Mid {
 
     public void build(){
         SCORING_POSITION = new Pose2d(-28.25,-17.75, toRadians(-45));
-        STORAGE_POSITION = new Pose2d(-51.6, -12.5, toRadians(180));
+        STORAGE_POSITION = new Pose2d(-51.6, -12, toRadians(180));
 
         drive.setPoseEstimate(INIT);
         bot.claw.close();

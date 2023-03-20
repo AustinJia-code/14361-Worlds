@@ -19,8 +19,8 @@ public class LeftBully extends High {
     public static Pose2d PARK_RIGHT = new Pose2d(-8, -16, toRadians(-90));
 
     public void build(){
-        SCORING_POSITION = new Pose2d(-26.25,-4, toRadians(45));
-        STORAGE_POSITION = new Pose2d(-49.1, -15.1, toRadians(180));
+        SCORING_POSITION = new Pose2d(-24.5,-3.25, toRadians(45));
+        STORAGE_POSITION = new Pose2d(-48, -12.1, toRadians(180));
 
         drive.setPoseEstimate(INIT);
         bot.claw.close();
@@ -31,16 +31,17 @@ public class LeftBully extends High {
                 .addTemporalMarker(0.7, () -> bot.slide.setTarget(LinearSlides.spoolChange(1420)))
                 .addTemporalMarker(0.8, () -> bot.arm.setPosition(State.HIGH))
                 .addTemporalMarker(2.2, () -> {
-                    bot.slide.incrementSlides(-1);
+                    bot.slide.setPosition(State.LOW);
                     bot.arm.slamThatJawn();
                 })
                 .back(34)
-                .splineTo(new Vector2d(SCORING_POSITION.getX()-1, SCORING_POSITION.getY()-1), SCORING_POSITION.getHeading())
+                .splineTo(new Vector2d(SCORING_POSITION.getX()-1, SCORING_POSITION.getY()-4), SCORING_POSITION.getHeading())
+                .back(2)
                 .resetConstraints()
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = ScoreToStorage(ScorePreload, 1, 0, 0);
+        ScoreToStorage1 = ScoreToStorage(ScorePreload, 0.2, -2, 0);
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(WaitAtStorage1, 0.35, 0, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
@@ -55,12 +56,12 @@ public class LeftBully extends High {
         StorageToScore3 = StorageToScore(WaitAtStorage3, 0, -0.35, 0);
         WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 0.5, -0.25, 0);
+        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 1.0, -0.25, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
         StorageToScore4 = StorageToScore(WaitAtStorage4, 1, -0.4, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 1.5, -0.5, 0);
+        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 2.2, -0.5, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(WaitAtStorage5, 1, -0.5, 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);

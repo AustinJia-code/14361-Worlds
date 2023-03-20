@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.commands.*;
 
 import static org.firstinspires.ftc.teamcode.commands.State.*;
 
+import ftc.rogue.blacksmith.listeners.*;
+
 public class LinearSlides implements Subsystem {
 
     enum Mode {POSITION, POWER}
@@ -20,6 +22,7 @@ public class LinearSlides implements Subsystem {
     private int HIGH = spoolChange(1390), MIDDLE = spoolChange(620), LOW = 0, INTAKE = 0;
     private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
+    public boolean lowered = false;
     int target;
 
     Mode mode = Mode.POWER;
@@ -73,8 +76,23 @@ public class LinearSlides implements Subsystem {
                 break;
             default:
                 setTarget(INTAKE+offset);
+                break;
         }
+        lowered = false;
     }
+
+    public void lower(){
+        if(!lowered) {
+            setTarget(target - spoolChange(140));
+        }
+        lowered = true;
+    };
+    public void keep(){
+        if(lowered) {
+            setTarget(target + spoolChange(140));
+        }
+        lowered = false;
+    };
 
     public void midLilHigher(){
         setTarget(MIDDLE+100);
@@ -85,7 +103,7 @@ public class LinearSlides implements Subsystem {
             case POWER:
                 if (Math.abs(input) > 0.01) {
                     setTarget(
-                            Range.clip(leftPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
+                            Range.clip(rightPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
                     );
                 }
                 break;
@@ -107,7 +125,7 @@ public class LinearSlides implements Subsystem {
     }
 
     public void powerSlides(){
-        double power = leftPID.getCorrectionPosition(leftSlide.getCurrentPosition());
+        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition());
 
         rightSlide.setPower(power);
         leftSlide.setPower(power);
@@ -123,8 +141,22 @@ public class LinearSlides implements Subsystem {
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
 
-        rightSlide.setPower(0.8);
-        leftSlide.setPower(0.8);
+        rightSlide.setPower(1); //CHANGED FROM 1
+        leftSlide.setPower(1); //CHANGED FROM 1
+    }
+
+    public void setModeToPosition(int lift){
+        HIGH = spoolChange(1410 + lift); MIDDLE = spoolChange(675); LOW = spoolChange(95); INTAKE = spoolChange(95);
+        mode = Mode.POSITION;
+        rightSlide.setTargetPosition(0);
+        leftSlide.setTargetPosition(0);
+
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
+
+        rightSlide.setPower(1); //CHANGED FROM 1
+        leftSlide.setPower(1); //CHANGED FROM 1
     }
 
     public void customScoringPositions(int HIGH, int MIDDLE){

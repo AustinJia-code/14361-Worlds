@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 //TUNED, 6.75 setup
+@Disabled
 @Autonomous(name = "\uD83D\uDC17 Right High \uD83D\uDC17", group = "Final")
 public class RightHigh extends High {
 

@@ -8,6 +8,7 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
+@Disabled
 @Autonomous(name = "Left Safe High", group = "Final")
 public class LeftSafeHigh extends SafeHigh {
 

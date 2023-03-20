@@ -1,39 +1,38 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.graphics.Color;
-
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.*;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.State;
 
 public class Claw implements Subsystem {
 
     private Servo claw, wrist;
-    private DistanceSensor poleLeftSensor, poleRightSensor, dropSensor, coneDistance;
+    private DistanceSensor behindLeftSensor, behindRightSensor, coneDistance, poleLeftSensor, poleRightSensor                       ;
     private int supinatedAngle = 35;
     private int pronatedAngle = 215;
     private int wristAngle = 35;
     private boolean pronated = false;
     private boolean flipped = false;
+    private double[] sensors = {0, 0, 0};
     double coneInches;
     boolean coneDetected, leftDetected, rightDetected, middleDropDetected, leftDropDetected, rightDropDetected, open;
+    boolean leftTilt, rightTilt;
     boolean autoDrop = false;
+    private int noneCount = 0, rightCount = 0, leftCount = 0;
 
     public Claw(HardwareMap hardwareMap){
         claw = hardwareMap.servo.get("claw");
         claw.setDirection(Servo.Direction.REVERSE);
         wrist = hardwareMap.servo.get("wrist");
 
+        behindLeftSensor = hardwareMap.get(DistanceSensor.class, "behind right");
+        behindRightSensor = hardwareMap.get(DistanceSensor.class, "behind left");
+
         poleLeftSensor = hardwareMap.get(DistanceSensor.class, "pole right");
         poleRightSensor = hardwareMap.get(DistanceSensor.class, "pole left");
-        dropSensor = hardwareMap.get(DistanceSensor.class, "drop sensor");
+
         coneDistance = hardwareMap.get(DistanceSensor.class, "cone sensor");
     }
 
@@ -64,7 +63,7 @@ public class Claw implements Subsystem {
     }
 
     public void TSEOpen(){
-        claw.setPosition(toServoPosition(154));
+        claw.setPosition(toServoPosition(153));
         open = true;
     }
 
@@ -96,13 +95,6 @@ public class Claw implements Subsystem {
     }
 
     public void outtake(){
-        /*
-        if(!flipped) {
-            supinate();
-        }else{
-            pronate();
-        }
-        */
         supinate();
     }   //scoring
 
@@ -149,37 +141,69 @@ public class Claw implements Subsystem {
     }
 
     //!!!flip caching until coen not detected to flip??
-    public boolean outtakeUpdate(State state, Gamepad gamepad1, Gamepad gamepad2, int loop){
-        double[] sensors = {poleLeftSensor.getDistance(DistanceUnit.INCH), dropSensor.getDistance(DistanceUnit.INCH), poleRightSensor.getDistance(DistanceUnit.INCH)};
+    public boolean behindCheck(State state, int loop, Arm arm, LinearSlides slide){
+        sensors = new double[]{behindLeftSensor.getDistance(DistanceUnit.INCH), 0, behindRightSensor.getDistance(DistanceUnit.INCH)};
         if(loop % 5 != 0) return false;
         switch (state) {
             case HIGH:
             case MIDDLE:
             case LOW:
-                leftDetected = sensors[0] < 10;
-                rightDetected = sensors[2] < 10;
-                middleDropDetected = sensors[1] <= 8.5 && sensors[1]>= 7;
-                leftDropDetected = sensors[0] <= 8.5 && sensors[0] >= 7;
-                rightDropDetected = sensors[2] <= 8.5 && sensors[2] >= 7;
+                leftDetected = sensors[0] < 5;
+                rightDetected = sensors[2] < 5;
+
+                leftTilt = 4.5 < sensors[0] && sensors[0] < 10;
+                rightTilt = 4.5 < sensors[2] && sensors[2] < 10;
+
+                leftDropDetected = sensors[0] <= 4.2 && sensors[0] >= 2;
+                rightDropDetected = sensors[2] <= 4.2 && sensors[2] >= 2;
 
                 if ((leftDetected && rightDetected) || (!leftDetected && !rightDetected)){
                     outtake();
+
+                    noneCount++; leftCount = 0; rightCount = 0;
+
+                    if(noneCount > 2) arm.keep();
+                    if(noneCount > 3) slide.keep();
+                    return false;
                 } else if (rightDetected) {
                     setLeft();
+
+                    noneCount = 0; leftCount = 0; rightCount++;
+
+                    if(rightCount > 2) arm.raise();
+                    if(rightCount > 3) slide.lower();
+                    return true;
+
                 } else if (leftDetected) {
                     setRight();
-                }
 
-                if ((middleDropDetected || leftDropDetected || rightDropDetected) && !open) {
-                    gamepad2.setLedColor(0, 1, 0, 100);
-                    gamepad2.rumble(300);
-                    gamepad1.setLedColor(0, 1, 0, 100);
-                    gamepad1.rumble(300);
-                    if(autoDrop) open();
-                }else {
-                    gamepad2.setLedColor(0,0.5,0.5, 100000);
-                    gamepad1.setLedColor(0,0.5,0.5, 100000);
+                    noneCount = 0; leftCount++; rightCount = 0;
+
+                    if(leftCount > 2) arm.raise();
+                    if(leftCount > 3) slide.lower();
+                    return true;
                 }
+                break;
+            default:
+                pronate();
+                break;
+        }
+        return true;
+    }
+
+    public boolean outtakeUpdate(State state, int loop){
+        sensors = new double[]{poleLeftSensor.getDistance(DistanceUnit.INCH), 0, poleRightSensor.getDistance(DistanceUnit.INCH)};
+        if(loop % 5 != 0) return false;
+        switch (state) {
+            case HIGH:
+            case MIDDLE:
+            case LOW:
+                leftDetected = 4.5 < sensors[0] && sensors[0] < 10;
+                rightDetected = 4.5 < sensors[2] && sensors[2] < 10;
+
+                if ((leftDetected && rightDetected) || (!leftDetected && !rightDetected)) outtake();
+                else if (rightDetected) setLeft();
+                else if (leftDetected) setRight();
                 break;
             default:
                 pronate();
@@ -200,4 +224,7 @@ public class Claw implements Subsystem {
     public boolean getAutoDrop(){
         return autoDrop;
     }
+
+    public double getLeft() { return leftCount; }
+    public double getRight() { return rightCount; }
 }

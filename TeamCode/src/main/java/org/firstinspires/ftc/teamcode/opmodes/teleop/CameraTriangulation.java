@@ -30,9 +30,9 @@ import static org.opencv.core.Core.inRange;
 import static org.opencv.core.Core.max;
 import static org.opencv.imgproc.Imgproc.*;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 
+@Disabled
 @TeleOp(name = "Camera Triangulation", group = "Final")
 public class CameraTriangulation extends OpMode {
     float anglex;

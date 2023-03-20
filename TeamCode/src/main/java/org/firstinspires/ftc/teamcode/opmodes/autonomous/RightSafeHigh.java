@@ -7,6 +7,7 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
+@Disabled
 @Autonomous(name = "Right Safe High", group = "Final")
 public class RightSafeHigh extends SafeHigh {
 
@@ -30,7 +31,7 @@ public class RightSafeHigh extends SafeHigh {
                 .addTemporalMarker(0, () -> bot.setPosition(State.HIGH))
                 .addTemporalMarker(0, () -> bot.slide.setTarget(LinearSlides.spoolChange(1420)))
                 .addTemporalMarker(2.6, () -> {
-                    bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
+                    //bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
                 })
                 .addTemporalMarker(2.8, () -> {
                     bot.slide.incrementSlides(-1);

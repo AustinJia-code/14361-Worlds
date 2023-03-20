@@ -18,6 +18,7 @@ public class Arm implements Subsystem {
 
     Double goTo;
     TrapezoidalMotionProfile profile;
+    State state;
     private RunMode runMode;
 
     public Arm(HardwareMap hardwareMap){
@@ -35,6 +36,37 @@ public class Arm implements Subsystem {
     public void setPosition(State state){
         switch(state){
             case INTAKING:
+                this.state = State.INTAKING;
+                setArms(INTAKING);
+                break;
+            case GROUND:
+                this.state = State.GROUND;
+                setArms(GROUND);
+                break;
+            case LOW:
+                this.state = State.LOW;
+                setArms(LEVEL);
+                break;
+            case BACKWARDS:
+                this.state = State.BACKWARDS;
+                setArms(BACKWARDS);
+                break;
+            case LIFTED:
+                this.state = State.LIFTED;
+                setArms(LIFTED);
+                break;
+            case MIDDLE:
+                this.state = State.MIDDLE;
+            case HIGH:
+                this.state = State.HIGH;
+            default:
+                setArms(SCORING);
+        }
+    }
+
+    public void setRaised(){
+        switch(state){
+            case INTAKING:
                 setArms(INTAKING);
                 break;
             case GROUND:
@@ -43,11 +75,11 @@ public class Arm implements Subsystem {
             case LOW:
                 setArms(LEVEL);
                 break;
-            case BACKWARDS:
-                setArms(BACKWARDS);
+            case MIDDLE:
+                setArms(SCORING - 17);
                 break;
-            case LIFTED:
-                setArms(LIFTED);
+            case HIGH:
+                setArms(SCORING - 23);
                 break;
             default:
                 setArms(SCORING);
@@ -57,6 +89,9 @@ public class Arm implements Subsystem {
     public void slamThatJawn(){
         setArms(SCORING+30);
     }
+
+    public void keep(){ setArms(SCORING); }
+    public void raise(){ setRaised(); }
 
     public void setArms(double target){
         leftArm.setPosition(toServoPosition(target));

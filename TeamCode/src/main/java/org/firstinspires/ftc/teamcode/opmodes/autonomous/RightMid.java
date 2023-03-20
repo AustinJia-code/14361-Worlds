@@ -61,12 +61,12 @@ public class RightMid extends Mid {
         StorageToScore3 = StorageToScore(ScoreToStorage3, -1, 1.5, 0);
         //WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(StorageToScore3, 0, 1, 0);
+        ScoreToStorage4 = ScoreToStorage(StorageToScore3, 0, 0.5, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
         StorageToScore4 = StorageToScore(ScoreToStorage4, -1, 1.5, 0);
         //WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(StorageToScore4, 0, 1, 0);
+        ScoreToStorage5 = ScoreToStorage(StorageToScore4, 0, 0.5, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(ScoreToStorage5, -.5, 1.6, 0);
         //WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);

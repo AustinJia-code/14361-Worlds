@@ -25,7 +25,7 @@ public abstract class BasedAbstract extends OpMode {
     int alliance;
     int loop;
     double multiplier;
-    private boolean curRT, oldRT, tilt;
+    private boolean curRT, oldRT, tilt, recess, locked;
     List<LynxModule> allHubs;
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
@@ -53,6 +53,7 @@ public abstract class BasedAbstract extends OpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         tilt = true;
+        recess = true;
 
         driver = new GamepadEx(gamepad1);   // drives the drivetrain
         operator = new GamepadEx(gamepad2); // controls the scoring systems
@@ -130,6 +131,10 @@ public abstract class BasedAbstract extends OpMode {
 
         if(driver.wasJustPressed(Button.A)){
             tilt = !tilt;
+        }
+
+        if(driver.wasJustPressed(Button.B)){
+            recess = !recess;
         }
 
         if(driver.wasJustPressed(Button.LEFT_BUMPER)){
@@ -227,7 +232,10 @@ public abstract class BasedAbstract extends OpMode {
             bot.slide.setTwo();
         }
 
-        if(tilt && bot.getState() != INTAKING && bot.getState() != BACKWARDS) bot.claw.outtakeUpdate(bot.getState(), driver.gamepad, operator.gamepad, loop);
+        if(bot.getState() != INTAKING && bot.getState() != BACKWARDS && bot.getState() != LOW) {
+            if(recess) locked = bot.claw.behindCheck(bot.getState(), loop, bot.arm, bot.slide);
+            if(tilt && !locked) bot.claw.outtakeUpdate(bot.getState(), loop);
+        }
         bot.slide.powerSlides();
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
@@ -236,8 +244,9 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addData("Runtime:", runtime.toString());
         telemetry.addData("Looptime: ", loopTime);
         telemetry.addData("Multiplier: ", multiplier);
-        telemetry.addData("Voltage: ", voltageReader.getVoltage());
+        //telemetry.addData("Voltage: ", voltageReader.getVoltage());
         telemetry.addData("Tilt: ", tilt);
+        telemetry.addData("Recess", recess);
     }
 
     @Override

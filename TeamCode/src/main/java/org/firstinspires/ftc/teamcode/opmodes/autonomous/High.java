@@ -180,7 +180,7 @@ public abstract class High extends LinearOpMode {
                 .addTemporalMarker(0, ()->{
                     bot.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(1.2, ()->{
+                .addTemporalMarker(1.3, ()->{
                     bot.setPosition(State.HIGH);
                 })
                 /*
