@@ -14,15 +14,14 @@ public class LeftMid extends Mid {
     private double waitAtScore = 0.1;
     public static Pose2d INIT = new Pose2d(-35.5, -62.5, toRadians(-90));
     public static Pose2d PARK_LEFT = new Pose2d(-60 , -15, toRadians(180));
-    public static Pose2d PARK_MIDDLE = new Pose2d(-36, -15, toRadians(-90));
+    public static Pose2d PARK_MIDDLE = new Pose2d(-36, -18, toRadians(-90));
     public static Pose2d PARK_RIGHT = new Pose2d(-29, -15, toRadians(90));
 
     public void build(){
-        SCORING_POSITION = new Pose2d(-28.25,-17.75, toRadians(-45));
-        STORAGE_POSITION = new Pose2d(-51.6, -12, toRadians(180));
+        SCORING_POSITION = new Pose2d(-27.75,-20.25, toRadians(-45));
+        STORAGE_POSITION = new Pose2d(-50.5, -11.5, toRadians(180));
 
         drive.setPoseEstimate(INIT);
-        bot.claw.close();
 
         ScorePreload = drive.trajectorySequenceBuilder(INIT)
                 .setConstraints(Constrainer.vel(50), Constrainer.accel(50))
@@ -34,62 +33,68 @@ public class LeftMid extends Mid {
                     bot.arm.slamThatJawn();
                 })
                 .back(50)
-                .turn(Math.toRadians(-130))
-                .back(8)
+                .turn(Math.toRadians(-125))
+                .back(8.5)
                 .resetConstraints()
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = ScoreToStorage(WaitAtScore1, 0, 0, 0);
+        ScoreToStorage1 = ScoreToStorage(WaitAtScore1, 0, 0.5, 0);
 
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(WaitAtStorage1, 0, 0, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
 
-        ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, 0, 0);
+        ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, -0.25, 0);
         WaitAtStorage2 = waitSequence(ScoreToStorage2, waitAtStorage, true);
-        StorageToScore2 = StorageToScore(WaitAtStorage2, 0, -0.75, 0);
+        StorageToScore2 = StorageToScore(WaitAtStorage2, 0, -1, 0);
         WaitAtScore3 = waitSequence(StorageToScore2, waitAtScore, false);
 
-        ScoreToStorage3 = ScoreToStorage(WaitAtScore3, 0, -0.5, 0);
+        ScoreToStorage3 = ScoreToStorage(WaitAtScore3, 0, -1.5, 0);
         WaitAtStorage3 = waitSequence(ScoreToStorage3, waitAtStorage, true);
-        StorageToScore3 = StorageToScore(WaitAtStorage3, -0.5, -2.0, 0);
+        StorageToScore3 = StorageToScore(WaitAtStorage3, -0.5, -3.0, 0);
         WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 0, -1, 0);
+        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 0, -2, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
-        StorageToScore4 = StorageToScore(WaitAtStorage4, 0, -3.0, 0);
+        StorageToScore4 = StorageToScore(WaitAtStorage4, 0, -4.25, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0, -1.25, 0);
+        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0, -3, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
-        StorageToScore5 = StorageToScore(WaitAtStorage5, 0, -4 , 0);
+        StorageToScore5 = StorageToScore(WaitAtStorage5, 0, -6 , 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
 
-        ParkMiddle = drive.trajectorySequenceBuilder(WaitAtScore5.end())
+        ParkMiddle = drive.trajectorySequenceBuilder(WaitAtScore6.end())
                 .setReversed(false)
                 .lineToLinearHeading(PARK_MIDDLE)
-                .addTemporalMarker(0.2, () -> {
-                    bot.setPosition(State.INTAKING);
+                .addTemporalMarker(0, () -> {
+                    bot.arm.setPosition(State.LIFTED);
+                    bot.claw.open();
                 })
+                .forward(8)
                 .waitSeconds(1)
                 .build();
-        ParkLeft = drive.trajectorySequenceBuilder(WaitAtScore5.end())
+        ParkLeft = drive.trajectorySequenceBuilder(WaitAtScore6.end())
                 .setReversed(false)
+                .addTemporalMarker(0, () -> {
+                    bot.arm.setPosition(State.LIFTED);
+                    bot.claw.open();
+                })
                 .lineToLinearHeading(PARK_MIDDLE)
                 .strafeRight(24)
-                .addTemporalMarker(0.2, () -> {
-                    bot.setPosition(State.INTAKING);
-                })
+                .forward(8)
                 .waitSeconds(1)
                 .build();
-        ParkRight = drive.trajectorySequenceBuilder(WaitAtScore5.end())
+        ParkRight = drive.trajectorySequenceBuilder(WaitAtScore6.end())
                 .setReversed(false)
+                .addTemporalMarker(0, () -> {
+                    bot.arm.setPosition(State.LIFTED);
+                    bot.claw.open();
+                })
                 .lineToLinearHeading(PARK_MIDDLE)
                 .strafeLeft(26)
-                .addTemporalMarker(0.2, () -> {
-                    bot.setPosition(State.INTAKING);
-                })
+                .forward(8)
                 .waitSeconds(1)
                 .build();
     }

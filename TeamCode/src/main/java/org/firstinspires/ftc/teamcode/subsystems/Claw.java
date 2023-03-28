@@ -16,6 +16,7 @@ public class Claw implements Subsystem {
     private boolean pronated = false;
     private boolean flipped = false;
     private double[] sensors = {0, 0, 0};
+    double readout = 0;
     double coneInches;
     boolean coneDetected, leftDetected, rightDetected, middleDropDetected, leftDropDetected, rightDropDetected, open;
     boolean leftTilt, rightTilt;
@@ -62,8 +63,23 @@ public class Claw implements Subsystem {
         open = false;
     }
 
+    public void TSEOpen(int section){
+        switch(section) {
+            case 0:
+                claw.setPosition(toServoPosition(125));
+            case 1:
+                claw.setPosition(toServoPosition(135));
+            case 2:
+                claw.setPosition(toServoPosition(140));
+            case 3:
+                claw.setPosition(toServoPosition(145));
+        }
+
+        open = true;
+    }
+
     public void TSEOpen(){
-        claw.setPosition(toServoPosition(153));
+        claw.setPosition(toServoPosition(148));
         open = true;
     }
 
@@ -193,6 +209,7 @@ public class Claw implements Subsystem {
 
     public boolean outtakeUpdate(State state, int loop){
         sensors = new double[]{poleLeftSensor.getDistance(DistanceUnit.INCH), 0, poleRightSensor.getDistance(DistanceUnit.INCH)};
+        readout = sensors[2];
         if(loop % 5 != 0) return false;
         switch (state) {
             case HIGH:
@@ -224,6 +241,7 @@ public class Claw implements Subsystem {
     public boolean getAutoDrop(){
         return autoDrop;
     }
+    public double getReadout() { return readout;}
 
     public double getLeft() { return leftCount; }
     public double getRight() { return rightCount; }

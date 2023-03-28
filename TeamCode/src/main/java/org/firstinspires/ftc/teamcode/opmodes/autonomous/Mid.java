@@ -41,7 +41,6 @@ public abstract class Mid extends LinearOpMode {
         sleeveDetection = new SleeveDetection();
 
         bot.slide.setModeToPosition();
-        bot.claw.close();
         bot.arm.setAutoPositions(185);
 
         build();
@@ -64,6 +63,7 @@ public abstract class Mid extends LinearOpMode {
     public abstract void setCameraPosition();
     public abstract void build();
     public void execute(TSEPosition position){
+        bot.claw.close();
         camera.closeCameraDevice();
         bot.arm.setArms(192);
         bot.arm.setArms(192);
@@ -183,14 +183,14 @@ public abstract class Mid extends LinearOpMode {
                 .addTemporalMarker(0, () -> {
                     bot.arm.setPosition(State.HIGH);
                 })
-                .addTemporalMarker(0.7, () -> {
+                .addTemporalMarker(0.35, () -> {
                     bot.setPosition(State.MIDDLE);
                 })
                 .addTemporalMarker(2.0, () -> {
                     bot.slide.incrementSlides(-500);
                     bot.arm.slamThatJawn();
                 })
-                .back(11)
+                .back(12)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
                 .build();
     }

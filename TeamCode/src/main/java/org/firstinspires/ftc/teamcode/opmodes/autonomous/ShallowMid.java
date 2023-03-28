@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.openftc.easyopencv.*;
 
 @Config
-public abstract class High extends LinearOpMode {
+public abstract class ShallowMid extends LinearOpMode {
 
     Robot bot;
     SampleMecanumDrive drive;
@@ -23,6 +23,7 @@ public abstract class High extends LinearOpMode {
     OpenCvCamera camera;
     String webcamName;
 
+    TrajectorySequence WaitTemp;
     TrajectorySequence ScorePreload;
     TrajectorySequence ScoreToStorage1, ScoreToStorage2, ScoreToStorage3, ScoreToStorage4, ScoreToStorage5;
     TrajectorySequence StorageToScore1, StorageToScore2, StorageToScore3, StorageToScore4, StorageToScore5;
@@ -40,12 +41,7 @@ public abstract class High extends LinearOpMode {
         sleeveDetection = new SleeveDetection();
 
         bot.slide.setModeToPosition();
-        bot.arm.setAutoPositions(182);
-
-        DriveConstants.MAX_VEL = 45;
-        DriveConstants.MAX_ACCEL = 45;
-        DriveConstants.MAX_ANG_VEL = Math.toRadians(90);
-        DriveConstants.MAX_ANG_ACCEL = Math.toRadians(90);
+        bot.arm.setAutoPositions(185);
 
         build();
 
@@ -69,66 +65,73 @@ public abstract class High extends LinearOpMode {
     public void execute(TSEPosition position){
         bot.claw.close();
         camera.closeCameraDevice();
-        bot.arm.setPosition(State.HIGH);
+        bot.arm.setArms(192);
+        bot.arm.setArms(192);
+
         //Score 1+0
         drive.followTrajectorySequence(ScorePreload);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore1);
+        //drive.followTrajectorySequence(WaitAtScore1);
 
         //Intake from five
         bot.slide.setFive();
         drive.followTrajectorySequence(ScoreToStorage1);
-        drive.followTrajectorySequence(WaitAtStorage1);
+        bot.claw.close();
+        //drive.followTrajectorySequence(WaitAtStorage1);
 
         //Score 1+1
         drive.followTrajectorySequence(StorageToScore1);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore2);
+        //drive.followTrajectorySequence(WaitAtScore2);
 
         //Intake from four
         bot.slide.setFour();
         drive.followTrajectorySequence(ScoreToStorage2);
-        drive.followTrajectorySequence(WaitAtStorage2);
+        bot.claw.close();
+        // drive.followTrajectorySequence(WaitAtStorage2);
 
         //Score 1+2
         drive.followTrajectorySequence(StorageToScore2);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore3);
+        //.followTrajectorySequence(WaitAtScore3);
 
         //Intake from three
         bot.slide.setThree();
         drive.followTrajectorySequence(ScoreToStorage3);
-        drive.followTrajectorySequence(WaitAtStorage3);
+        bot.claw.close();
+        //drive.followTrajectorySequence(WaitAtStorage3);
 
         //Score 1+3
         drive.followTrajectorySequence(StorageToScore3);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore4);
+        //drive.followTrajectorySequence(WaitAtScore4);
 
         //Intake from two
         bot.slide.setTwo();
         drive.followTrajectorySequence(ScoreToStorage4);
-        drive.followTrajectorySequence(WaitAtStorage4);
+        bot.claw.close();
+        //drive.followTrajectorySequence(WaitAtStorage4);
 
         //Score 1+4
         drive.followTrajectorySequence(StorageToScore4);
         bot.claw.open();
-        drive.followTrajectorySequence(WaitAtScore5);
+        //drive.followTrajectorySequence(WaitAtScore5);
 
         //Intake from one
         bot.slide.setOne();
         drive.followTrajectorySequence(ScoreToStorage5);
-        drive.followTrajectorySequence(WaitAtStorage5);
+        bot.claw.close();
+        //drive.followTrajectorySequence(WaitAtStorage5);
 
         //Score 1+5
         drive.followTrajectorySequence(StorageToScore5);
         bot.claw.open();
-
-        drive.followTrajectorySequence(WaitAtScore6);
+        //drive.followTrajectorySequence(WaitAtScore6);
 
         bot.setPosition(State.INTAKING);
-        bot.slide.setOne();
-        //drive.followTrajectorySequence(ParkMiddle);
+        bot.claw.supinate();
+        bot.arm.setPosition(State.HIGH);
+        bot.slide.setTarget(-40);
 
         switch(position) {
             case LEFT:
@@ -139,96 +142,58 @@ public abstract class High extends LinearOpMode {
                 break;
             case MIDDLE:
                 drive.followTrajectorySequence(ParkMiddle);
+                break;
         }
-        bot.slide.setOne();
+
+
     }
     public TrajectorySequence waitSequence(TrajectorySequence preceding, double time, boolean lift){
-        if(lift) {
+        if(lift){
             return drive.trajectorySequenceBuilder(preceding.end())
                     .addTemporalMarker(0, () -> {
                         bot.slide.setPosition(State.MIDDLE);
                         bot.slide.midLilHigher();
+                        bot.arm.setPosition(State.HIGH);
                     })
                     .waitSeconds(time)
                     .build();
         }
-        else{
-            return drive.trajectorySequenceBuilder(preceding.end())
-                    .waitSeconds(time)
-                    .build();
-        }
+        return drive.trajectorySequenceBuilder(preceding.end())
+                .waitSeconds(time)
+                .build();
 
     }
     public TrajectorySequence ScoreToStorage(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
-                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {
                     bot.arm.setPosition(State.INTAKING);
                     bot.claw.setPosition(State.INTAKING);
                 })
-                .addTemporalMarker(1.7, () -> {
+                .addTemporalMarker(1.8, () -> {
                     bot.claw.close();
                 })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
-                .forward(11.5)
+                .forward(11)
                 .build();
     }
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
-                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
-                .addTemporalMarker(0, ()->{
-                    bot.arm.setPosition(State.MIDDLE);
-                    bot.slide.setPosition(State.MIDDLE);
+                .setReversed(true)
+                .addTemporalMarker(0, () -> {
+                    bot.arm.setPosition(State.HIGH);
                 })
-                .addTemporalMarker(0.5, ()->{
-                    bot.claw.setPosition(State.MIDDLE);
+                .addTemporalMarker(0.35, () -> {
+                    bot.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(1.3, ()->{
-                    bot.setPosition(State.HIGH);
-                })
-                /*
-                .addTemporalMarker(1.8, () -> {
-                    bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
-                })
-                */
-                .addTemporalMarker(2, () -> {
+                .addTemporalMarker(2.0, () -> {
+                    bot.slide.incrementSlides(-500);
                     bot.arm.slamThatJawn();
-                    bot.slide.setPosition(State.MIDDLE);
                 })
-                .back(11.5)
+                .back(9)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
                 .build();
     }
-
-    public TrajectorySequence StorageToScoreLast(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
-        return drive.trajectorySequenceBuilder(preceding.end())
-                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
-                .addTemporalMarker(0, ()->{
-                    bot.arm.setPosition(State.MIDDLE);
-                    bot.slide.setPosition(State.MIDDLE);
-                })
-                .addTemporalMarker(0.5, ()->{
-                    bot.claw.setPosition(State.MIDDLE);
-                })
-                .addTemporalMarker(1.3, ()->{
-                    bot.setPosition(State.HIGH);
-                    bot.slide.highLilHigher();
-                })
-                /*
-                .addTemporalMarker(1.8, () -> {
-                    bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
-                })
-                */
-                .addTemporalMarker(2, () -> {
-                    bot.arm.slamThatJawn();
-                    bot.slide.setPosition(State.MIDDLE);
-                })
-                .back(11.5)
-                .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
-                .build();
-    }
-
     private void initCam() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
@@ -246,5 +211,6 @@ public abstract class High extends LinearOpMode {
             @Override
             public void onError(int errorCode) {}
         });
+
     }
 }

@@ -12,7 +12,7 @@ public class Mecanum implements Subsystem {
     double y, x, rx, leftFrontPower, leftRearPower, rightFrontPower, rightRearPower, heading, rotX, rotY;
     private RevIMU imu;
     private Mode mode;
-    private double speed = 1, desiredHeading = 0.0;
+    private double speed = 0.85, desiredHeading = 0.0;
 
     enum Mode{FIELD, ROBOT}
 

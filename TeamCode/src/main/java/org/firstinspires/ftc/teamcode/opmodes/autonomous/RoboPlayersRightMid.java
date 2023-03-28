@@ -7,8 +7,8 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
-@Autonomous(name = "Right Mid", group = "Final")
-public class RightMid extends Mid {
+@Autonomous(name = "Right Mid Shallow", group = "Final")
+public class RoboPlayersRightMid extends ShallowMid {
 
     private double wait = 0.5;
 
@@ -20,8 +20,8 @@ public class RightMid extends Mid {
     public static Pose2d PARK_RIGHT = new Pose2d(60, -12.5, toRadians(0));
 
     public void build(){
-        SCORING_POSITION = new Pose2d(29,-18.25, toRadians(225));
-        STORAGE_POSITION = new Pose2d(52.25, -10.5, toRadians(0));
+        SCORING_POSITION = new Pose2d(32,-19.5, toRadians(200));
+        STORAGE_POSITION = new Pose2d(52.5, -10.5, toRadians(0));
 
         drive.setPoseEstimate(INIT);
 
@@ -34,10 +34,11 @@ public class RightMid extends Mid {
                 .addTemporalMarker(2, () -> {
                     bot.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(4.6, () -> {
+                .addTemporalMarker(5.4, () -> {
                     bot.arm.slamThatJawn();
                 })
-                .back(50)
+                .back(65)
+                .forward(15)
                 .turn(Math.toRadians(130))
                 .back(8)
                 .resetConstraints()
@@ -55,17 +56,17 @@ public class RightMid extends Mid {
         StorageToScore2 = StorageToScore(ScoreToStorage2, 0, 0.5, 0);
         //WaitAtScore3 = waitSequence(StorageToScore2, waitAtScore, false);
 
-        ScoreToStorage3 = ScoreToStorage(StorageToScore2, 0, 0, 0);
+        ScoreToStorage3 = ScoreToStorage(StorageToScore2, 0, 0.5, 0);
         WaitAtStorage3 = waitSequence(ScoreToStorage3, waitAtStorage, true);
         StorageToScore3 = StorageToScore(ScoreToStorage3, 0, 1.5, 0);
         //WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(StorageToScore3, 0, 0.1, 0);
+        ScoreToStorage4 = ScoreToStorage(StorageToScore3, 0, 1, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
         StorageToScore4 = StorageToScore(ScoreToStorage4, -0.5, 1.5, 0);
         //WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(StorageToScore4, 0, 0, 0);
+        ScoreToStorage5 = ScoreToStorage(StorageToScore4, 0, 1, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(ScoreToStorage5, -0.75, 2.0, 0);
         //WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
@@ -88,7 +89,7 @@ public class RightMid extends Mid {
                 })
                 .forward(6)
                 .lineToLinearHeading(new Pose2d(PARK_MIDDLE.vec(), toRadians(0)))
-                .back(22.5)
+                .back(23.5)
                 .strafeRight(8)
                 .waitSeconds(1)
                 .build();

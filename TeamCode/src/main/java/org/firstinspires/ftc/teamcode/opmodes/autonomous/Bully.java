@@ -178,9 +178,40 @@ public abstract class Bully extends LinearOpMode {
         return drive.trajectorySequenceBuilder(preceding.end())
                 .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .addTemporalMarker(0, ()->{
-                    bot.setPosition(State.MIDDLE);
+                    bot.arm.setPosition(State.MIDDLE);
+                    bot.slide.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(1.65, ()->{ //CHANGED FROM 1.2
+                .addTemporalMarker(0.5, ()->{
+                    bot.claw.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(1.5, ()->{ //CHANGED FROM 1.2
+                    bot.setPosition(State.HIGH);
+                })
+                /*
+                .addTemporalMarker(1.8, () -> {
+                    bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
+                })
+                */
+                .addTemporalMarker(2, () -> {
+                    bot.arm.slamThatJawn();
+                    bot.slide.setPosition(State.MIDDLE);
+                })
+                .back(11.5)
+                .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
+                .build();
+    }
+
+    public TrajectorySequence StorageToScoreLast(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
+        return drive.trajectorySequenceBuilder(preceding.end())
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
+                .addTemporalMarker(0, ()->{
+                    bot.arm.setPosition(State.MIDDLE);
+                    bot.slide.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(0.5, ()->{
+                    bot.claw.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(1.5, ()->{ //CHANGED FROM 1.2
                     bot.setPosition(State.HIGH);
                 })
                 /*

@@ -26,6 +26,7 @@ public abstract class BasedAbstract extends OpMode {
     int loop;
     double multiplier;
     private boolean curRT, oldRT, tilt, recess, locked;
+    int section = 0;
     List<LynxModule> allHubs;
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
@@ -201,8 +202,11 @@ public abstract class BasedAbstract extends OpMode {
             bot.claw.actuate();
         }
 
+        if(operator.wasJustPressed(Button.Y)){
+            section = 0;
+        }
         if(operator.wasJustPressed(Button.B)){
-            bot.claw.TSEOpen();
+            bot.claw.TSEOpen(++section%4);
         }
         if(operator.wasJustReleased(Button.B)){
             bot.claw.close();
@@ -247,6 +251,7 @@ public abstract class BasedAbstract extends OpMode {
         //telemetry.addData("Voltage: ", voltageReader.getVoltage());
         telemetry.addData("Tilt: ", tilt);
         telemetry.addData("Recess", recess);
+        telemetry.addData("TSE: ", section%4);
     }
 
     @Override
