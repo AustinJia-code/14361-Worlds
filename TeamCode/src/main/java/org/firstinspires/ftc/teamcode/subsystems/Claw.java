@@ -121,12 +121,12 @@ public class Claw implements Subsystem {
     }
 
     public void setLeft(){
-        wrist.setPosition(toServoPosition(supinatedAngle+27));
+        wrist.setPosition(toServoPosition(supinatedAngle+18));
         pronated = false;
     }
 
     public void setRight(){
-        wrist.setPosition(toServoPosition(supinatedAngle-27));
+        wrist.setPosition(toServoPosition(supinatedAngle-18));
         pronated = false;
     }
 

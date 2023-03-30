@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.controller.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.*;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.commands.*;
 
@@ -12,14 +14,15 @@ import static org.firstinspires.ftc.teamcode.commands.State.*;
 
 import ftc.rogue.blacksmith.listeners.*;
 
+@Config
 public class LinearSlides implements Subsystem {
 
     enum Mode {POSITION, POWER}
 
     private DcMotorEx leftSlide, rightSlide;
 
-    private LiftPID leftPID, rightPID;
-    private int HIGH = spoolChange(1405), MIDDLE = spoolChange(680), LOW = 0, INTAKE = 0;
+    private PIDController leftPID, rightPID;
+    private int HIGH = spoolChange(1405), MIDDLE = spoolChange(680), LOW = 0, INTAKE = -10;
     private int FIVE = spoolChange(412), FOUR = spoolChange(293), THREE = spoolChange(190), TWO = spoolChange(72), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
@@ -28,6 +31,10 @@ public class LinearSlides implements Subsystem {
     Mode mode = Mode.POWER;
 
     private int update;
+
+    public static double P = 0.032;
+    public static double I = 0.000;
+    public static double D = 0.00001;
 
     public LinearSlides(HardwareMap hardwareMap){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -40,8 +47,10 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(5, 1, 1, 0, HIGH);
-        rightPID = new LiftPID(5, 1, 1, 0, HIGH);
+        leftPID = new PIDController(P,I,D);
+        rightPID = new PIDController(P,I,D);
+
+        leftPID.setTolerance(10); rightPID.setTolerance(10);
 
         leftSlide.setPower(0);
         rightSlide.setPower(0);
@@ -60,7 +69,7 @@ public class LinearSlides implements Subsystem {
                 setTarget(INTAKE+offset);
                 break;
             case BACKWARDS:
-                setTarget(INTAKE+offset + spoolChange(25));
+                setTarget(INTAKE+offset + spoolChange(10));
                 break;
             case GROUND:
                 setTarget(INTAKE+offset);
@@ -105,7 +114,7 @@ public class LinearSlides implements Subsystem {
             case POWER:
                 if (Math.abs(input) > 0.01) {
                     setTarget(
-                            Range.clip(leftPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
+                            Range.clip((int)leftPID.getSetPoint() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
                     );
                 }
                 break;
@@ -118,8 +127,8 @@ public class LinearSlides implements Subsystem {
         target = position;
         switch(mode){
             case POWER:
-                rightPID.setTarget(position);
-                leftPID.setTarget(position);
+                rightPID.setSetPoint(position);
+                leftPID.setSetPoint(position);
             case POSITION:
                 rightSlide.setTargetPosition(position);
                 leftSlide.setTargetPosition(position);
@@ -127,10 +136,10 @@ public class LinearSlides implements Subsystem {
     }
 
     public void powerSlides(){
-        double power = leftPID.getCorrectionPosition(leftSlide.getCurrentPosition()) * 0.9;
-
-        rightSlide.setPower(power);
-        leftSlide.setPower(power);
+        double power = leftPID.calculate(leftSlide.getCurrentPosition());
+            rightSlide.setPower(power);
+            leftSlide.setPower(power);
+        if(leftPID.atSetPoint()) { leftPID.reset(); }
     }
 
     public void setModeToPosition(){
@@ -217,4 +226,8 @@ public class LinearSlides implements Subsystem {
     public static int spoolChange(int height){
         return (int) (height / 1.2 / 384.5 * 145.1);
     }
+
+    public int getError(){ return (int)leftPID.getPositionError(); }
+    public int getTarget(){ return (int)leftPID.getSetPoint(); }
+    public int getReal(){ return leftSlide.getCurrentPosition(); }
 }

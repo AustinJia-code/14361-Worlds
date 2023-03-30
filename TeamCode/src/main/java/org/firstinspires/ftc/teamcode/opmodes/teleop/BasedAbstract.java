@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.acmerobotics.dashboard.*;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.*;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys.*;
 import com.qualcomm.hardware.lynx.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import static org.firstinspires.ftc.teamcode.commands.State.*;
@@ -37,9 +41,10 @@ public abstract class BasedAbstract extends OpMode {
 
     @Override
     public void init() {
-        telemetry.addLine("Status: Initializing");
-        telemetry.update();
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
+        telemetry.addLine("Status: Initializing");
         telemetry.update();
 
         setAlliance();
@@ -72,13 +77,8 @@ public abstract class BasedAbstract extends OpMode {
 
     @Override
     public void loop() {
-
-
         multiplier = 1;
-
         if(loop++ == 100000) loop = 0;
-
-
 
         double startTime = System.currentTimeMillis();
 
@@ -245,13 +245,23 @@ public abstract class BasedAbstract extends OpMode {
 
         double loopTime = System.currentTimeMillis() -startTime;
         // ---------------------------- TELEMETRY ---------------------------- //
-        telemetry.addData("Runtime:", runtime.toString());
-        telemetry.addData("Looptime: ", loopTime);
-        telemetry.addData("Multiplier: ", multiplier);
-        //telemetry.addData("Voltage: ", voltageReader.getVoltage());
-        telemetry.addData("Tilt: ", tilt);
-        telemetry.addData("Recess", recess);
-        telemetry.addData("TSE: ", section%4);
+        telemetry.addLine("Runtime: " + runtime.toString());
+        telemetry.addLine("Looptime: " + loopTime);
+        telemetry.addLine("Multiplier: " + multiplier);
+        telemetry.addLine("Tilt: " + tilt);
+        telemetry.addLine("Recess " + recess);
+        telemetry.addLine("TSE: " + section%4);
+        //telemetry.addData("Target", bot.slide.getTarget());
+        //telemetry.addData("Real", bot.slide.getReal());
+        telemetry.addData("Voltage", voltageReader.getVoltage());
+        for(int i = 0; i < allHubs.size(); i++){
+            telemetry.addData("Current - Hub" + i, allHubs.get(i).getCurrent(CurrentUnit.AMPS));
+        }
+
+        //telemetry.log().add(runtime.milliseconds() + "");
+        //telemetry.log().add(voltageReader.getVoltage() + "");
+        //telemetry.log().add(allHubs.get(0).getCurrent(CurrentUnit.AMPS) + "");
+
     }
 
     @Override
