@@ -178,7 +178,7 @@ public abstract class High extends LinearOpMode {
         return drive.trajectorySequenceBuilder(preceding.end())
                 .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .addTemporalMarker(0, ()->{
-                    bot.arm.setPosition(State.MIDDLE);
+                    bot.arm.setPosition(State.LIFTED);
                     bot.slide.setPosition(State.MIDDLE);
                 })
                 .addTemporalMarker(0.5, ()->{
@@ -186,6 +186,10 @@ public abstract class High extends LinearOpMode {
                 })
                 .addTemporalMarker(1.3, ()->{
                     bot.setPosition(State.HIGH);
+                    bot.arm.setPosition(State.LIFTED);
+                })
+                .addTemporalMarker(1.65, ()->{
+                    bot.arm.setPosition(State.HIGH);
                 })
                 /*
                 .addTemporalMarker(1.8, () -> {
@@ -205,7 +209,7 @@ public abstract class High extends LinearOpMode {
         return drive.trajectorySequenceBuilder(preceding.end())
                 .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .addTemporalMarker(0, ()->{
-                    bot.arm.setPosition(State.MIDDLE);
+                    bot.arm.setPosition(State.LIFTED);
                     bot.slide.setPosition(State.MIDDLE);
                 })
                 .addTemporalMarker(0.5, ()->{
@@ -213,7 +217,11 @@ public abstract class High extends LinearOpMode {
                 })
                 .addTemporalMarker(1.3, ()->{
                     bot.setPosition(State.HIGH);
+                    bot.arm.setPosition(State.LIFTED);
                     bot.slide.highLilHigher();
+                })
+                .addTemporalMarker(1.65, ()->{
+                    bot.arm.setPosition(State.HIGH);
                 })
                 /*
                 .addTemporalMarker(1.8, () -> {
