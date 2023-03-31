@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.arcrobotics.ftclib.controller.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.*;
-import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.commands.*;
 
@@ -14,16 +12,15 @@ import static org.firstinspires.ftc.teamcode.commands.State.*;
 
 import ftc.rogue.blacksmith.listeners.*;
 
-@Config
 public class LinearSlides implements Subsystem {
 
     enum Mode {POSITION, POWER}
 
     private DcMotorEx leftSlide, rightSlide;
 
-    private PIDController leftPID, rightPID;
-    private int HIGH = spoolChange(1405), MIDDLE = spoolChange(680), LOW = 0, INTAKE = -10;
-    private int FIVE = spoolChange(412), FOUR = spoolChange(293), THREE = spoolChange(190), TWO = spoolChange(72), ONE = 00;
+    private LiftPID leftPID, rightPID;
+    private int HIGH = spoolChange(1390), MIDDLE = spoolChange(620), LOW = 0, INTAKE = -7;
+    private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
     int target;
@@ -31,10 +28,6 @@ public class LinearSlides implements Subsystem {
     Mode mode = Mode.POWER;
 
     private int update;
-
-    public static double P = 0.032;
-    public static double I = 0.000;
-    public static double D = 0.00001;
 
     public LinearSlides(HardwareMap hardwareMap){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -47,10 +40,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new PIDController(P,I,D);
-        rightPID = new PIDController(P,I,D);
-
-        leftPID.setTolerance(10); rightPID.setTolerance(10);
+        leftPID = new LiftPID(3, 1, 1, 0, HIGH);
+        rightPID = new LiftPID(3, 1, 1, 0, HIGH);
 
         leftSlide.setPower(0);
         rightSlide.setPower(0);
@@ -69,7 +60,7 @@ public class LinearSlides implements Subsystem {
                 setTarget(INTAKE+offset);
                 break;
             case BACKWARDS:
-                setTarget(INTAKE+offset + spoolChange(10));
+                setTarget(INTAKE+offset);
                 break;
             case GROUND:
                 setTarget(INTAKE+offset);
@@ -85,6 +76,7 @@ public class LinearSlides implements Subsystem {
                 break;
             default:
                 setTarget(INTAKE+offset);
+                break;
         }
         lowered = false;
     }
@@ -105,8 +97,9 @@ public class LinearSlides implements Subsystem {
     public void midLilHigher(){
         setTarget(MIDDLE+100);
     }
+
     public void highLilHigher(){
-        setTarget(HIGH+spoolChange(50));
+        setTarget(HIGH+20);
     }
 
     public void incrementSlides(double input){
@@ -114,7 +107,7 @@ public class LinearSlides implements Subsystem {
             case POWER:
                 if (Math.abs(input) > 0.01) {
                     setTarget(
-                            Range.clip((int)leftPID.getSetPoint() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
+                            Range.clip(rightPID.getTarget() + (int) Math.round(input * update), INTAKE + offset, spoolChange(1650) + offset)
                     );
                 }
                 break;
@@ -127,8 +120,8 @@ public class LinearSlides implements Subsystem {
         target = position;
         switch(mode){
             case POWER:
-                rightPID.setSetPoint(position);
-                leftPID.setSetPoint(position);
+                rightPID.setTarget(position);
+                leftPID.setTarget(position);
             case POSITION:
                 rightSlide.setTargetPosition(position);
                 leftSlide.setTargetPosition(position);
@@ -136,14 +129,14 @@ public class LinearSlides implements Subsystem {
     }
 
     public void powerSlides(){
-        double power = leftPID.calculate(leftSlide.getCurrentPosition());
-            rightSlide.setPower(power);
-            leftSlide.setPower(power);
-        if(leftPID.atSetPoint()) { leftPID.reset(); }
+        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition());
+
+        rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
     public void setModeToPosition(){
-        HIGH = spoolChange(1480); MIDDLE = spoolChange(675); LOW = spoolChange(95); INTAKE = spoolChange(95);
+        HIGH = spoolChange(1410); MIDDLE = spoolChange(675); LOW = spoolChange(95); INTAKE = spoolChange(95);
         mode = Mode.POSITION;
         rightSlide.setTargetPosition(0);
         leftSlide.setTargetPosition(0);
@@ -210,24 +203,9 @@ public class LinearSlides implements Subsystem {
     public void reset(){
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftSlide.setPower(0);
-        rightSlide.setPower(0);
-
-        rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
-
-        setPosition(INTAKING);
     }
 
     public static int spoolChange(int height){
         return (int) (height / 1.2 / 384.5 * 145.1);
     }
-
-    public int getError(){ return (int)leftPID.getPositionError(); }
-    public int getTarget(){ return (int)leftPID.getSetPoint(); }
-    public int getReal(){ return leftSlide.getCurrentPosition(); }
 }

@@ -22,7 +22,7 @@ public class RightBully extends High {
 
     public void build(){
         SCORING_POSITION = new Pose2d(24.25,-6, toRadians(135));
-        STORAGE_POSITION = new Pose2d(48, -11, toRadians(0));
+        STORAGE_POSITION = new Pose2d(48.2, -11, toRadians(0));
 
         drive.setPoseEstimate(INIT);
 
@@ -41,7 +41,7 @@ public class RightBully extends High {
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = ScoreToStorage(ScorePreload, -1, -1, 0);
+        ScoreToStorage1 = ScoreToStorage(ScorePreload, -0.5, -1, 0);
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(WaitAtStorage1, 0.9, 3.8, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
@@ -61,9 +61,9 @@ public class RightBully extends High {
         StorageToScore4 = StorageToScore(WaitAtStorage4, 1, 6.0, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, -1.25, 2, 0);
+        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, -1, 2, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
-        StorageToScore5 = StorageToScoreLast(WaitAtStorage5, 1.75, 7.8 , 0);
+        StorageToScore5 = StorageToScoreLast(WaitAtStorage5, 0.5, 7 , 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
 
         ParkMiddle = drive.trajectorySequenceBuilder(WaitAtScore6.end())

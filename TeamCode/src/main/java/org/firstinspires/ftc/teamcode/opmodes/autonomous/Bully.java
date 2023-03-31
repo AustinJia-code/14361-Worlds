@@ -165,6 +165,8 @@ public abstract class Bully extends LinearOpMode {
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {
                     bot.arm.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(0.5, () -> {
                     bot.claw.setPosition(State.INTAKING);
                 })
                 .addTemporalMarker(1.7, () -> {
