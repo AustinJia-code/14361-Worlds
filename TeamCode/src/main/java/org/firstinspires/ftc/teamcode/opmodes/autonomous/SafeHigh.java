@@ -63,7 +63,7 @@ public abstract class SafeHigh extends LinearOpMode {
 
         execute(sleeveDetection.getPosition());
 
-        bot.slide.setOne();
+        bot.slide.setPosition(State.ONE);
     }
 
     public abstract void setCameraPosition();
@@ -79,7 +79,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive.followTrajectorySequence(WaitAtScore1);
 
         //Intake from five
-        bot.slide.setFive();
+        bot.slide.setPosition(State.FIVE);
         drive.followTrajectorySequence(ScoreToStorage1);
         bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage1);
@@ -90,7 +90,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive.followTrajectorySequence(WaitAtScore2);
 
         //Intake from four
-        bot.slide.setFour();
+        bot.slide.setPosition(State.FOUR);
         drive.followTrajectorySequence(ScoreToStorage2);
         bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage2);
@@ -101,7 +101,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive.followTrajectorySequence(WaitAtScore3);
 
         //Intake from three
-        bot.slide.setThree();
+        bot.slide.setPosition(State.THREE);
         drive.followTrajectorySequence(ScoreToStorage3);
         bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage3);
@@ -112,7 +112,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive.followTrajectorySequence(WaitAtScore4);
 
         //Intake from two
-        bot.slide.setTwo();
+        bot.slide.setPosition(State.TWO);
         drive.followTrajectorySequence(ScoreToStorage4);
         bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage4);
@@ -123,7 +123,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive.followTrajectorySequence(WaitAtScore5);
 
         //Intake from one
-        bot.slide.setOne();
+        bot.slide.setPosition(State.ONE);
         drive.followTrajectorySequence(ScoreToStorage5);
         bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage5);
@@ -135,7 +135,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive.followTrajectorySequence(WaitAtScore6);
 
         bot.setPosition(State.INTAKING);
-        bot.slide.setOne();
+        bot.slide.setPosition(State.ONE);
         //drive.followTrajectorySequence(ParkMiddle);
 
         switch(position) {
@@ -148,7 +148,7 @@ public abstract class SafeHigh extends LinearOpMode {
             case MIDDLE:
                 drive.followTrajectorySequence(ParkMiddle);
         }
-        bot.slide.setOne();
+        bot.slide.setPosition(State.ONE);
     }
     public TrajectorySequence waitSequence(TrajectorySequence preceding, double time){
         return drive.trajectorySequenceBuilder(preceding.end())

@@ -52,6 +52,14 @@ public class Claw implements Subsystem {
                 close();
                 pronate();
                 break;
+            case FIVE:
+            case FOUR:
+            case THREE:
+            case TWO:
+            case ONE:
+                open();
+                pronate();
+                break;
             default:
                 close();
                 supinate();
@@ -59,7 +67,7 @@ public class Claw implements Subsystem {
     }
 
     public void close(){
-        claw.setPosition(toServoPosition(125));
+        claw.setPosition(toServoPosition(124));
         open = false;
     }
 

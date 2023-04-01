@@ -29,7 +29,7 @@ public abstract class BasedAbstract extends OpMode {
     int alliance;
     int loop;
     double multiplier;
-    private boolean curRT, oldRT, tilt, recess, locked;
+    private boolean curRT, oldRT, curLT, oldLT, tilt, recess, locked;
     int section = 0;
     List<LynxModule> allHubs;
 
@@ -144,96 +144,122 @@ public abstract class BasedAbstract extends OpMode {
 
         // ---------------------------- OPERATOR CODE ---------------------------- //
 
-        if(operator.wasJustPressed(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
-            if(bot.getState() == BACKWARDS) bot.setPosition(LIFTED);
-            else bot.setPosition(INTAKING);
-        }
-        if(operator.isDown(Button.RIGHT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
-            bot.claw.intakeUpdate();
-        }
-        if(operator.wasJustReleased(Button.RIGHT_BUMPER)){                            // Left Bumper = Closes Claw, Goes to Ground
-            bot.claw.close();
-        }
-        if(operator.getTrigger(Trigger.RIGHT_TRIGGER) > 0.05){
-            if(!oldRT){
-                bot.claw.setPosition(INTAKING);
-                bot.slide.setPosition(INTAKING);
-                bot.arm.setPosition(INTAKING);
+        // ======================== OPERATOR LEFT TRIGGER LAYER ======================== //
+        oldLT = curLT;
+        if(operator.gamepad.left_trigger > 0.1){
+            curLT = true;
+
+            // CONESTACK
+            if(operator.wasJustPressed(Button.DPAD_UP)){
+                bot.setPosition(FIVE);
             }
-            oldRT = curRT;
-            curRT = true;
-        }else{
-            oldRT = curRT;
-            curRT = false;
-            if(!curRT && oldRT){
+            if(operator.wasJustPressed(Button.DPAD_RIGHT)){
+                bot.setPosition(FOUR);
+            }
+            if(operator.wasJustPressed(Button.DPAD_LEFT)){
+                bot.setPosition(THREE);
+            }
+            if(operator.wasJustPressed(Button.DPAD_DOWN)){
+                bot.setPosition(TWO);
+            }
+
+            if(operator.wasJustReleased(Button.DPAD_UP)){
+                bot.claw.close();
+            }
+            if(operator.wasJustReleased(Button.DPAD_RIGHT)){
+                bot.claw.close();
+            }
+            if(operator.wasJustReleased(Button.DPAD_LEFT)){
+                bot.claw.close();
+            }
+            if(operator.wasJustReleased(Button.DPAD_DOWN)){
+                bot.claw.close();
+            }
+
+            if(operator.wasJustPressed(Button.A)){
+                bot.slide.midLilHigher();
+            }
+
+        } else {
+
+            // ======================== OPERATOR DEFAULT LAYER ======================== //
+
+            curLT = false;
+
+            if (operator.wasJustPressed(Button.RIGHT_BUMPER)) {                           // Right Bumper = Opens Claw, Goes to Floor
+                if (bot.getState() == BACKWARDS) bot.setPosition(LIFTED);
+                else bot.setPosition(INTAKING);
+            }
+            if (operator.isDown(Button.RIGHT_BUMPER)) {                           // Right Bumper = Opens Claw, Goes to Floor
+                bot.claw.intakeUpdate();
+            }
+            if (operator.wasJustReleased(Button.RIGHT_BUMPER)) {                            // Left Bumper = Closes Claw, Goes to Ground
+                bot.claw.close();
+            }
+            if (operator.getTrigger(Trigger.RIGHT_TRIGGER) > 0.05) {
+                if (!oldRT) {
+                    bot.claw.setPosition(INTAKING);
+                    bot.slide.setPosition(INTAKING);
+                    bot.arm.setPosition(INTAKING);
+                }
+                oldRT = curRT;
+                curRT = true;
+            } else {
+                oldRT = curRT;
+                curRT = false;
+                if (!curRT && oldRT) {
+                    bot.claw.close();
+                }
+            }
+            if (operator.wasJustPressed(Button.LEFT_BUMPER)) {                           // Right Bumper = Opens Claw, Goes to Floor
+                if (bot.getState() == INTAKING) bot.setPosition(LIFTED);
+                else if (bot.getState() == BACKWARDS || bot.getState() == LIFTED || bot.getState() == LOW)
+                    bot.setPosition(BACKWARDS);
+                else bot.setPosition(LOW);
+            }
+            if (operator.wasJustReleased(Button.LEFT_BUMPER)) {                            // Left Bumper = Closes Claw, Goes to Ground
+                bot.claw.close();
+            }
+
+            if (operator.wasJustPressed(Button.DPAD_UP)) {                                      // Y = Sets High position
+                bot.setPosition(HIGH);
+            }
+
+            if (operator.wasJustPressed(Button.DPAD_RIGHT)) {                                      // B = Sets Middle position
+                bot.setPosition(MIDDLE);
+            }
+
+            if (operator.wasJustPressed(Button.DPAD_LEFT)) {                                      // A = Sets Low position
+                bot.setPosition(LOW);
+            }
+
+            if (operator.wasJustPressed(Button.DPAD_DOWN)) {                                      // A = Sets Low position
+                bot.setPosition(GROUND);
+            }
+
+            if (operator.wasJustPressed(Button.A)) {
+                bot.claw.flip();
+            }
+
+            if (operator.wasJustPressed(Button.X)) {
+                bot.claw.actuate();
+            }
+
+            if (operator.wasJustPressed(Button.Y)) {
+                section = 0;
+            }
+            if (operator.wasJustPressed(Button.B)) {
+                bot.claw.TSEOpen(++section % 4);
+            }
+            if (operator.wasJustReleased(Button.B)) {
                 bot.claw.close();
             }
         }
-        if(operator.wasJustPressed(Button.LEFT_BUMPER)){                           // Right Bumper = Opens Claw, Goes to Floor
-            if(bot.getState() == INTAKING) bot.setPosition(LIFTED);
-            else if(bot.getState() == BACKWARDS || bot.getState() == LIFTED || bot.getState() == LOW) bot.setPosition(BACKWARDS);
-            else bot.setPosition(LOW);
-        }
-        if(operator.wasJustReleased(Button.LEFT_BUMPER)){                            // Left Bumper = Closes Claw, Goes to Ground
-            bot.claw.close();
-        }
 
-        if(operator.wasJustPressed(Button.DPAD_UP)){                                      // Y = Sets High position
-            bot.setPosition(HIGH);
-        }
-
-        if(operator.wasJustPressed(Button.DPAD_RIGHT)){                                      // B = Sets Middle position
-            bot.setPosition(MIDDLE);
-        }
-
-        if(operator.wasJustPressed(Button.DPAD_LEFT)){                                      // A = Sets Low position
-            bot.setPosition(LOW);
-        }
-
-        if(operator.wasJustPressed(Button.DPAD_DOWN)){                                      // A = Sets Low position
-            bot.setPosition(GROUND);
-        }
-
-        if(operator.wasJustPressed(Button.A)){
-            bot.claw.flip();
-        }
-
-        if(operator.wasJustPressed(Button.X)){
-            bot.claw.actuate();
-        }
-
-        if(operator.wasJustPressed(Button.Y)){
-            section = 0;
-        }
-        if(operator.wasJustPressed(Button.B)){
-            bot.claw.TSEOpen(++section%4);
-        }
-        if(operator.wasJustReleased(Button.B)){
-            bot.claw.close();
-        }
-
-        if(operator.gamepad.touchpad_finger_1_x < 0 && operator.gamepad.touchpad_finger_1_y > 0 && operator.gamepad.touchpad_finger_1){
-            bot.setPosition(INTAKING);
-            bot.claw.open();
-            bot.slide.setFive();
-        }
-
-        if(operator.gamepad.touchpad_finger_1_x > 0 && operator.gamepad.touchpad_finger_1_y > 0 && operator.gamepad.touchpad_finger_1){
-            bot.setPosition(INTAKING);
-            bot.claw.open();
-            bot.slide.setFour();
-        }
-
-        if(operator.gamepad.touchpad_finger_1_x < 0 && operator.gamepad.touchpad_finger_1_y < 0 && operator.gamepad.touchpad_finger_1){
-            bot.setPosition(INTAKING);
-            bot.claw.open();
-            bot.slide.setThree();
-        }
-
-        if(operator.gamepad.touchpad_finger_1_x > 0 && operator.gamepad.touchpad_finger_1_y < 0 && operator.gamepad.touchpad_finger_1){
-            bot.setPosition(INTAKING);
-            bot.claw.open();
-            bot.slide.setTwo();
+        // CONESTACK RAISE
+        if(oldLT && operator.gamepad.left_trigger == 0){
+            bot.slide.midLilHigher();
+            oldLT = false;
         }
 
         if(bot.getState() != INTAKING && bot.getState() != BACKWARDS && bot.getState() != LOW) {

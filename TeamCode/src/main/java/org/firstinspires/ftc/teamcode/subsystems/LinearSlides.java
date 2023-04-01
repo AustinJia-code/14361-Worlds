@@ -19,7 +19,7 @@ public class LinearSlides implements Subsystem {
     private DcMotorEx leftSlide, rightSlide;
 
     private LiftPID leftPID, rightPID;
-    private int HIGH = spoolChange(1390), MIDDLE = spoolChange(620), LOW = 0, INTAKE = -7;
+    private int HIGH = spoolChange(1410), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
     private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
@@ -73,6 +73,21 @@ public class LinearSlides implements Subsystem {
                 break;
             case HIGH:
                 setTarget(HIGH+offset);
+                break;
+            case FIVE:
+                setTarget(FIVE);
+                break;
+            case FOUR:
+                setTarget(FOUR);
+                break;
+            case THREE:
+                setTarget(THREE);
+                break;
+            case TWO:
+                setTarget(TWO);
+                break;
+            case ONE:
+                setTarget(ONE);
                 break;
             default:
                 setTarget(INTAKE+offset);
@@ -174,26 +189,6 @@ public class LinearSlides implements Subsystem {
         this.THREE = THREE + TH;
         this.TWO = TWO + TW;
         this.ONE = ONE + ON;
-    }
-
-    public void setFive(){
-        setTarget(FIVE);
-    }
-
-    public void setFour(){
-        setTarget(FOUR);
-    }
-
-    public void setThree(){
-        setTarget(THREE);
-    }
-
-    public void setTwo(){
-        setTarget(TWO);
-    }
-
-    public void setOne(){
-        setTarget(ONE);
     }
 
     public String slideReport(){

@@ -30,6 +30,11 @@ public class Arm implements Subsystem {
     public void setPosition(State state){
         switch(state){
             case INTAKING:
+            case FIVE:
+            case FOUR:
+            case THREE:
+            case TWO:
+            case ONE:
                 this.state = State.INTAKING;
                 setArms(INTAKING);
                 break;
