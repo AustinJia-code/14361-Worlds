@@ -96,7 +96,7 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         if(driver.getTrigger(Trigger.LEFT_TRIGGER) > 0.1){
-            desiredSpeed = (0.8 - driver.getTrigger(Trigger.LEFT_TRIGGER) * 0.6) * multiplier;
+            desiredSpeed = (0.8 - driver.getTrigger(Trigger.LEFT_TRIGGER) * 0.4) * multiplier;
         }else if(driver.getTrigger(Trigger.RIGHT_TRIGGER) > 0.1){
             desiredSpeed = 1 * multiplier;
         }else{
@@ -139,7 +139,7 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         if(driver.wasJustPressed(Button.LEFT_BUMPER)){
-            bot.claw.TSEOpen();
+            bot.drivetrain.switchModes();
         }
 
         // ---------------------------- OPERATOR CODE ---------------------------- //
