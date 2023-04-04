@@ -256,8 +256,8 @@ public abstract class BasedAbstract extends OpMode {
             }
         }
 
-        // CONESTACK RAISE
-        if(oldLT && operator.gamepad.left_trigger == 0){
+        // CONESTACK RAISE ON TRIGGER RELEASE
+        if(oldLT && !curLT){
             bot.slide.midLilHigher();
             oldLT = false;
         }
@@ -283,6 +283,7 @@ public abstract class BasedAbstract extends OpMode {
         for(int i = 0; i < allHubs.size(); i++){
             telemetry.addData("Current - Hub" + i, allHubs.get(i).getCurrent(CurrentUnit.AMPS));
         }
+        telemetry.addData("Mode: ", bot.drivetrain.getMode());
 
         //telemetry.log().add(runtime.milliseconds() + "");
         //telemetry.log().add(voltageReader.getVoltage() + "");

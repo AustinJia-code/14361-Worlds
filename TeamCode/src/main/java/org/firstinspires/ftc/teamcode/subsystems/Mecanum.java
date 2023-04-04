@@ -59,16 +59,24 @@ public class Mecanum implements Subsystem {
         switch (mode){
             case FIELD:
                 heading = Math.toRadians(-imu.getHeading()+180);
-                x = x * Math.cos(heading) - y * Math.sin(heading);
-                y = x * Math.sin(heading) + y * Math.cos(heading);
+                rotX = x * Math.cos(heading) - y * Math.sin(heading);
+                rotY = x * Math.sin(heading) + y * Math.cos(heading);
+
+                leftFrontPower = (rotY + rotX + rx);
+                leftRearPower = (rotY - rotX + rx);
+                rightFrontPower = (rotY - rotX - rx);
+                rightRearPower = (rotY + rotX - rx);
                 break;
             case ROBOT:
+                //y = -y;
+                //x = -x;
+
+                leftFrontPower = (y + x + rx);
+                leftRearPower = (y - x + rx);
+                rightFrontPower = (y - x - rx);
+                rightRearPower = (y + x - rx);
                 break;
         }
-        leftFrontPower = (y + x + rx);
-        leftRearPower = (y - x + rx);
-        rightFrontPower = (y - x - rx);
-        rightRearPower = (y + x - rx);
 
         powerMotors(leftFrontPower, leftRearPower, rightFrontPower, rightRearPower);
     }

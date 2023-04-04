@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.*;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.commands.*;
 
 import static org.firstinspires.ftc.teamcode.commands.State.*;
@@ -19,11 +20,12 @@ public class LinearSlides implements Subsystem {
     private DcMotorEx leftSlide, rightSlide;
 
     private LiftPID leftPID, rightPID;
-    private int HIGH = spoolChange(1410), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
+    private int HIGH = spoolChange(1410), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 5;
     private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
     int target;
+    int stallCount;
 
     Mode mode = Mode.POWER;
 
@@ -40,8 +42,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(3, 1, 1, 0, HIGH);
-        rightPID = new LiftPID(3, 1, 1, 0, HIGH);
+        leftPID = new LiftPID(3, 0, 1, 0, HIGH);
+        rightPID = new LiftPID(3, 0, 1, 0, HIGH);
 
         leftSlide.setPower(0);
         rightSlide.setPower(0);
@@ -51,6 +53,7 @@ public class LinearSlides implements Subsystem {
         setPosition(INTAKING);
 
         update = 20;
+        stallCount = 0;
     }
 
     public void setPosition(State state){
@@ -146,6 +149,8 @@ public class LinearSlides implements Subsystem {
     public void powerSlides(){
         double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition());
 
+        //power = stallCheck(power);
+
         rightSlide.setPower(power);
         leftSlide.setPower(power);
     }
@@ -198,6 +203,18 @@ public class LinearSlides implements Subsystem {
     public void reset(){
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public double stallCheck(double power){
+        if(rightSlide.getCurrent(CurrentUnit.AMPS) > 5) {
+            stallCount++;
+        }else{
+            stallCount = 0;
+        }
+        if(stallCount > 5){
+            return 0;
+        }
+        return power;
     }
 
     public static int spoolChange(int height){
