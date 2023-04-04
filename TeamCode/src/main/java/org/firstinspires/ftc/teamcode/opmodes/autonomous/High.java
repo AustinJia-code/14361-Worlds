@@ -22,6 +22,8 @@ public abstract class High extends LinearOpMode {
     SleeveDetection sleeveDetection;
     OpenCvCamera camera;
     String webcamName;
+    TapeLocalizer tapeLocalizer;
+    int alliance;
 
     TrajectorySequence ScorePreload;
     TrajectorySequence ScoreToStorage1, ScoreToStorage2, ScoreToStorage3, ScoreToStorage4, ScoreToStorage5;
@@ -29,6 +31,7 @@ public abstract class High extends LinearOpMode {
     TrajectorySequence WaitAtScore1, WaitAtScore2, WaitAtScore3, WaitAtScore4, WaitAtScore5, WaitAtScore6, WaitAtStorage1, WaitAtStorage2, WaitAtStorage3, WaitAtStorage4, WaitAtStorage5;
     TrajectorySequence ParkLeft, ParkRight, ParkMiddle;
     Pose2d SCORING_POSITION, STORAGE_POSITION;
+    ;
 
     @Override
     public void runOpMode(){
@@ -37,6 +40,7 @@ public abstract class High extends LinearOpMode {
 
         bot = new Robot(hardwareMap, telemetry);
         drive = new SampleMecanumDrive(hardwareMap);
+
         sleeveDetection = new SleeveDetection();
 
         bot.slide.setModeToPosition();
@@ -51,6 +55,8 @@ public abstract class High extends LinearOpMode {
 
         setCameraPosition();
         initCam();
+
+        tapeLocalizer = new TapeLocalizer(drive, hardwareMap);
 
         while (!isStarted()) {
             telemetry.addData("STATUS:", "INITIALIZED");
@@ -166,6 +172,9 @@ public abstract class High extends LinearOpMode {
                 .addTemporalMarker(0.2, () -> {
                     bot.arm.setPosition(State.INTAKING);
                     bot.claw.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(1.5, () ->{
+                    tapeLocalizer.relocalize();
                 })
                 .addTemporalMarker(1.7, () -> {
                     bot.claw.close();

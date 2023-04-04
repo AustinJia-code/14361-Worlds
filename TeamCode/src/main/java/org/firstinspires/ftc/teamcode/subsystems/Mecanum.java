@@ -88,6 +88,10 @@ public class Mecanum implements Subsystem {
         rightRear.setPower(rightRearPower * speed);
     }
 
+    public double getHeading(){
+        return imu.getHeading();
+    }
+
     public void setSpeed(double speed){
         this.speed = speed;
     }

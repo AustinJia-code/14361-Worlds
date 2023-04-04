@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.OldenCodes.autonomous;
 
 import com.acmerobotics.dashboard.config.*;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,8 +14,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.openftc.easyopencv.*;
 
+@Disabled
 @Config
-public abstract class ShallowMid extends LinearOpMode {
+public abstract class SafeHigh extends LinearOpMode {
 
     Robot bot;
     SampleMecanumDrive drive;
@@ -23,7 +24,6 @@ public abstract class ShallowMid extends LinearOpMode {
     OpenCvCamera camera;
     String webcamName;
 
-    TrajectorySequence WaitTemp;
     TrajectorySequence ScorePreload;
     TrajectorySequence ScoreToStorage1, ScoreToStorage2, ScoreToStorage3, ScoreToStorage4, ScoreToStorage5;
     TrajectorySequence StorageToScore1, StorageToScore2, StorageToScore3, StorageToScore4, StorageToScore5;
@@ -41,7 +41,13 @@ public abstract class ShallowMid extends LinearOpMode {
         sleeveDetection = new SleeveDetection();
 
         bot.slide.setModeToPosition();
-        bot.arm.setAutoPositions(185);
+        bot.claw.close();
+        bot.arm.setAutoPositions(182);
+
+        DriveConstants.MAX_VEL = 45;
+        DriveConstants.MAX_ACCEL = 45;
+        DriveConstants.MAX_ANG_VEL = Math.toRadians(90);
+        DriveConstants.MAX_ANG_ACCEL = Math.toRadians(90);
 
         build();
 
@@ -63,7 +69,6 @@ public abstract class ShallowMid extends LinearOpMode {
     public abstract void setCameraPosition();
     public abstract void build();
     public void execute(TSEPosition position){
-        bot.claw.close();
         camera.closeCameraDevice();
         bot.arm.setArms(192);
         bot.arm.setArms(192);
@@ -71,67 +76,67 @@ public abstract class ShallowMid extends LinearOpMode {
         //Score 1+0
         drive.followTrajectorySequence(ScorePreload);
         bot.claw.open();
-        //drive.followTrajectorySequence(WaitAtScore1);
+        drive.followTrajectorySequence(WaitAtScore1);
 
         //Intake from five
         bot.slide.setPosition(State.FIVE);
         drive.followTrajectorySequence(ScoreToStorage1);
         bot.claw.close();
-        //drive.followTrajectorySequence(WaitAtStorage1);
+        drive.followTrajectorySequence(WaitAtStorage1);
 
         //Score 1+1
         drive.followTrajectorySequence(StorageToScore1);
         bot.claw.open();
-        //drive.followTrajectorySequence(WaitAtScore2);
+        drive.followTrajectorySequence(WaitAtScore2);
 
         //Intake from four
         bot.slide.setPosition(State.FOUR);
         drive.followTrajectorySequence(ScoreToStorage2);
         bot.claw.close();
-        // drive.followTrajectorySequence(WaitAtStorage2);
+        drive.followTrajectorySequence(WaitAtStorage2);
 
         //Score 1+2
         drive.followTrajectorySequence(StorageToScore2);
         bot.claw.open();
-        //.followTrajectorySequence(WaitAtScore3);
+        drive.followTrajectorySequence(WaitAtScore3);
 
         //Intake from three
         bot.slide.setPosition(State.THREE);
         drive.followTrajectorySequence(ScoreToStorage3);
         bot.claw.close();
-        //drive.followTrajectorySequence(WaitAtStorage3);
+        drive.followTrajectorySequence(WaitAtStorage3);
 
         //Score 1+3
         drive.followTrajectorySequence(StorageToScore3);
         bot.claw.open();
-        //drive.followTrajectorySequence(WaitAtScore4);
+        drive.followTrajectorySequence(WaitAtScore4);
 
         //Intake from two
         bot.slide.setPosition(State.TWO);
         drive.followTrajectorySequence(ScoreToStorage4);
         bot.claw.close();
-        //drive.followTrajectorySequence(WaitAtStorage4);
+        drive.followTrajectorySequence(WaitAtStorage4);
 
         //Score 1+4
         drive.followTrajectorySequence(StorageToScore4);
         bot.claw.open();
-        //drive.followTrajectorySequence(WaitAtScore5);
+        drive.followTrajectorySequence(WaitAtScore5);
 
         //Intake from one
         bot.slide.setPosition(State.ONE);
         drive.followTrajectorySequence(ScoreToStorage5);
         bot.claw.close();
-        //drive.followTrajectorySequence(WaitAtStorage5);
+        drive.followTrajectorySequence(WaitAtStorage5);
 
         //Score 1+5
         drive.followTrajectorySequence(StorageToScore5);
         bot.claw.open();
-        //drive.followTrajectorySequence(WaitAtScore6);
+
+        drive.followTrajectorySequence(WaitAtScore6);
 
         bot.setPosition(State.INTAKING);
-        bot.claw.supinate();
-        bot.arm.setPosition(State.HIGH);
-        bot.slide.setTarget(-40);
+        bot.slide.setPosition(State.ONE);
+        //drive.followTrajectorySequence(ParkMiddle);
 
         switch(position) {
             case LEFT:
@@ -142,22 +147,10 @@ public abstract class ShallowMid extends LinearOpMode {
                 break;
             case MIDDLE:
                 drive.followTrajectorySequence(ParkMiddle);
-                break;
         }
-
-
+        bot.slide.setPosition(State.ONE);
     }
-    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time, boolean lift){
-        if(lift){
-            return drive.trajectorySequenceBuilder(preceding.end())
-                    .addTemporalMarker(0, () -> {
-                        bot.slide.setPosition(State.MIDDLE);
-                        bot.slide.midLilHigher();
-                        bot.arm.setPosition(State.HIGH);
-                    })
-                    .waitSeconds(time)
-                    .build();
-        }
+    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time){
         return drive.trajectorySequenceBuilder(preceding.end())
                 .waitSeconds(time)
                 .build();
@@ -170,30 +163,39 @@ public abstract class ShallowMid extends LinearOpMode {
                     bot.arm.setPosition(State.INTAKING);
                     bot.claw.setPosition(State.INTAKING);
                 })
-                .addTemporalMarker(1.8, () -> {
+                .addTemporalMarker(2.1, () -> {
                     bot.claw.close();
                 })
+                .addTemporalMarker(2.25, () -> {
+                    bot.slide.setPosition(State.MIDDLE);
+                    bot.slide.midLilHigher();
+                })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
-                .forward(11)
+                .forward(25.5)
                 .build();
     }
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
-                .setReversed(true)
-                .addTemporalMarker(0, () -> {
+                .addTemporalMarker(0.2, ()->{
                     bot.arm.setPosition(State.HIGH);
                 })
-                .addTemporalMarker(0.35, () -> {
-                    bot.setPosition(State.MIDDLE);
+                .addTemporalMarker(0.7, ()->{
+                    bot.setPosition(State.HIGH);
                 })
-                .addTemporalMarker(2.0, () -> {
-                    bot.slide.incrementSlides(-500);
+                /*
+                .addTemporalMarker(1.8, () -> {
+                    bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
+                })
+                */
+                .addTemporalMarker(2.4, () -> {
+                    bot.slide.setPosition(State.MIDDLE);
                     bot.arm.slamThatJawn();
                 })
-                .back(9)
+                .back(35.5)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
                 .build();
     }
+
     private void initCam() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
@@ -211,6 +213,5 @@ public abstract class ShallowMid extends LinearOpMode {
             @Override
             public void onError(int errorCode) {}
         });
-
     }
 }

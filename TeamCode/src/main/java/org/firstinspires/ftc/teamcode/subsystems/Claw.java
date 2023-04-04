@@ -34,7 +34,7 @@ public class Claw implements Subsystem {
         poleLeftSensor = hardwareMap.get(DistanceSensor.class, "pole right");
         poleRightSensor = hardwareMap.get(DistanceSensor.class, "pole left");
 
-        coneDistance = hardwareMap.get(DistanceSensor.class, "cone sensor");
+        //coneDistance = hardwareMap.get(DistanceSensor.class, "cone sensor");
     }
 
     public void setPosition(State state){
@@ -157,11 +157,13 @@ public class Claw implements Subsystem {
     }
 
     public void intakeUpdate(){
+        /*
         coneInches = coneDistance.getDistance(DistanceUnit.INCH);
         coneDetected = coneInches < 6.75;
         if(coneDetected){
             close();
         }
+         */
     }
 
     //!!!flip caching until coen not detected to flip??

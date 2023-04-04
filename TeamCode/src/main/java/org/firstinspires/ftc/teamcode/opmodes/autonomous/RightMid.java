@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 public class RightMid extends Mid {
 
     private double wait = 0.5;
-
     private double waitAtStorage = 0;
     private double waitAtScore = 0;
     public static Pose2d INIT = new Pose2d(35.5, -62.5, toRadians(-90));

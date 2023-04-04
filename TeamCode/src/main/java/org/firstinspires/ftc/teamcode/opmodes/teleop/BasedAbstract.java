@@ -284,6 +284,7 @@ public abstract class BasedAbstract extends OpMode {
             telemetry.addData("Current - Hub" + i, allHubs.get(i).getCurrent(CurrentUnit.AMPS));
         }
         telemetry.addData("Mode: ", bot.drivetrain.getMode());
+        telemetry.addData("Angle: ", bot.drivetrain.getHeading());
 
         //telemetry.log().add(runtime.milliseconds() + "");
         //telemetry.log().add(voltageReader.getVoltage() + "");

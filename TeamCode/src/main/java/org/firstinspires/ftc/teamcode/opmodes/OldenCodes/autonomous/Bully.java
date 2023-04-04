@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.OldenCodes.autonomous;
 
 import com.acmerobotics.dashboard.config.*;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,9 +14,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.openftc.easyopencv.*;
 
-@Disabled
 @Config
-public abstract class SafeHigh extends LinearOpMode {
+public abstract class Bully extends LinearOpMode {
 
     Robot bot;
     SampleMecanumDrive drive;
@@ -40,7 +39,7 @@ public abstract class SafeHigh extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         sleeveDetection = new SleeveDetection();
 
-        bot.slide.setModeToPosition();
+        bot.slide.setModeToPosition(100);
         bot.claw.close();
         bot.arm.setAutoPositions(182);
 
@@ -70,9 +69,7 @@ public abstract class SafeHigh extends LinearOpMode {
     public abstract void build();
     public void execute(TSEPosition position){
         camera.closeCameraDevice();
-        bot.arm.setArms(192);
-        bot.arm.setArms(192);
-
+        bot.arm.setPosition(State.HIGH);
         //Score 1+0
         drive.followTrajectorySequence(ScorePreload);
         bot.claw.open();
@@ -81,7 +78,6 @@ public abstract class SafeHigh extends LinearOpMode {
         //Intake from five
         bot.slide.setPosition(State.FIVE);
         drive.followTrajectorySequence(ScoreToStorage1);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage1);
 
         //Score 1+1
@@ -92,7 +88,6 @@ public abstract class SafeHigh extends LinearOpMode {
         //Intake from four
         bot.slide.setPosition(State.FOUR);
         drive.followTrajectorySequence(ScoreToStorage2);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage2);
 
         //Score 1+2
@@ -103,7 +98,6 @@ public abstract class SafeHigh extends LinearOpMode {
         //Intake from three
         bot.slide.setPosition(State.THREE);
         drive.followTrajectorySequence(ScoreToStorage3);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage3);
 
         //Score 1+3
@@ -114,7 +108,6 @@ public abstract class SafeHigh extends LinearOpMode {
         //Intake from two
         bot.slide.setPosition(State.TWO);
         drive.followTrajectorySequence(ScoreToStorage4);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage4);
 
         //Score 1+4
@@ -125,7 +118,6 @@ public abstract class SafeHigh extends LinearOpMode {
         //Intake from one
         bot.slide.setPosition(State.ONE);
         drive.followTrajectorySequence(ScoreToStorage5);
-        bot.claw.close();
         drive.followTrajectorySequence(WaitAtStorage5);
 
         //Score 1+5
@@ -150,36 +142,51 @@ public abstract class SafeHigh extends LinearOpMode {
         }
         bot.slide.setPosition(State.ONE);
     }
-    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time){
-        return drive.trajectorySequenceBuilder(preceding.end())
-                .waitSeconds(time)
-                .build();
+    public TrajectorySequence waitSequence(TrajectorySequence preceding, double time, boolean lift){
+        if(lift) {
+            return drive.trajectorySequenceBuilder(preceding.end())
+                    .addTemporalMarker(0, () -> {
+                        bot.slide.setPosition(State.MIDDLE);
+                        bot.slide.midLilHigher();
+                    })
+                    .waitSeconds(time)
+                    .build();
+        }
+        else{
+            return drive.trajectorySequenceBuilder(preceding.end())
+                    .waitSeconds(time)
+                    .build();
+        }
 
     }
     public TrajectorySequence ScoreToStorage(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {
                     bot.arm.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(0.5, () -> {
                     bot.claw.setPosition(State.INTAKING);
                 })
-                .addTemporalMarker(2.1, () -> {
+                .addTemporalMarker(1.7, () -> {
                     bot.claw.close();
                 })
-                .addTemporalMarker(2.25, () -> {
-                    bot.slide.setPosition(State.MIDDLE);
-                    bot.slide.midLilHigher();
-                })
                 .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
-                .forward(25.5)
+                .forward(11.5)
                 .build();
     }
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
-                .addTemporalMarker(0.2, ()->{
-                    bot.arm.setPosition(State.HIGH);
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
+                .addTemporalMarker(0, ()->{
+                    bot.arm.setPosition(State.MIDDLE);
+                    bot.slide.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(0.7, ()->{
+                .addTemporalMarker(0.5, ()->{
+                    bot.claw.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(1.5, ()->{ //CHANGED FROM 1.2
                     bot.setPosition(State.HIGH);
                 })
                 /*
@@ -187,11 +194,38 @@ public abstract class SafeHigh extends LinearOpMode {
                     bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
                 })
                 */
-                .addTemporalMarker(2.4, () -> {
-                    bot.slide.setPosition(State.MIDDLE);
+                .addTemporalMarker(2, () -> {
                     bot.arm.slamThatJawn();
+                    bot.slide.setPosition(State.MIDDLE);
                 })
-                .back(35.5)
+                .back(11.5)
+                .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
+                .build();
+    }
+
+    public TrajectorySequence StorageToScoreLast(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
+        return drive.trajectorySequenceBuilder(preceding.end())
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
+                .addTemporalMarker(0, ()->{
+                    bot.arm.setPosition(State.MIDDLE);
+                    bot.slide.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(0.5, ()->{
+                    bot.claw.setPosition(State.MIDDLE);
+                })
+                .addTemporalMarker(1.5, ()->{ //CHANGED FROM 1.2
+                    bot.setPosition(State.HIGH);
+                })
+                /*
+                .addTemporalMarker(1.8, () -> {
+                    bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
+                })
+                */
+                .addTemporalMarker(2, () -> {
+                    bot.arm.slamThatJawn();
+                    bot.slide.setPosition(State.MIDDLE);
+                })
+                .back(11.5)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)
                 .build();
     }
