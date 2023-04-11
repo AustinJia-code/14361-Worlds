@@ -28,8 +28,8 @@ public class Claw implements Subsystem {
         claw.setDirection(Servo.Direction.REVERSE);
         wrist = hardwareMap.servo.get("wrist");
 
-        behindLeftSensor = hardwareMap.get(DistanceSensor.class, "behind right");
-        behindRightSensor = hardwareMap.get(DistanceSensor.class, "behind left");
+        behindLeftSensor = hardwareMap.get(DistanceSensor.class, "behind left");
+        behindRightSensor = hardwareMap.get(DistanceSensor.class, "behind right");
 
         poleLeftSensor = hardwareMap.get(DistanceSensor.class, "pole right");
         poleRightSensor = hardwareMap.get(DistanceSensor.class, "pole left");
@@ -168,8 +168,9 @@ public class Claw implements Subsystem {
 
     //!!!flip caching until coen not detected to flip??
     public boolean behindCheck(State state, int loop, Arm arm, LinearSlides slide){
-        sensors = new double[]{behindLeftSensor.getDistance(DistanceUnit.INCH), 0, behindRightSensor.getDistance(DistanceUnit.INCH)};
         if(loop % 5 != 0) return false;
+        sensors = new double[]{behindLeftSensor.getDistance(DistanceUnit.INCH), 0, behindRightSensor.getDistance(DistanceUnit.INCH)};
+        readout = sensors[2];
         switch (state) {
             case HIGH:
             case MIDDLE:
@@ -177,27 +178,21 @@ public class Claw implements Subsystem {
                 leftDetected = sensors[0] < 5;
                 rightDetected = sensors[2] < 5;
 
-                leftTilt = 4.5 < sensors[0] && sensors[0] < 10;
-                rightTilt = 4.5 < sensors[2] && sensors[2] < 10;
-
-                leftDropDetected = sensors[0] <= 4.2 && sensors[0] >= 2;
-                rightDropDetected = sensors[2] <= 4.2 && sensors[2] >= 2;
-
                 if ((leftDetected && rightDetected) || (!leftDetected && !rightDetected)){
                     outtake();
 
                     noneCount++; leftCount = 0; rightCount = 0;
 
+                    if(noneCount > 1) slide.keep();
                     if(noneCount > 2) arm.keep();
-                    if(noneCount > 3) slide.keep();
                     return false;
                 } else if (rightDetected) {
                     setLeft();
 
                     noneCount = 0; leftCount = 0; rightCount++;
 
-                    if(rightCount > 2) arm.raise();
-                    if(rightCount > 3) slide.lower();
+                    if(rightCount > 1) arm.raise();
+                    if(rightCount > 2) slide.lower();
                     return true;
 
                 } else if (leftDetected) {
@@ -205,8 +200,8 @@ public class Claw implements Subsystem {
 
                     noneCount = 0; leftCount++; rightCount = 0;
 
-                    if(leftCount > 2) arm.raise();
-                    if(leftCount > 3) slide.lower();
+                    if(leftCount > 1) arm.raise();
+                    if(leftCount > 2) slide.lower();
                     return true;
                 }
                 break;
@@ -218,9 +213,8 @@ public class Claw implements Subsystem {
     }
 
     public boolean outtakeUpdate(State state, int loop){
-        sensors = new double[]{poleLeftSensor.getDistance(DistanceUnit.INCH), 0, poleRightSensor.getDistance(DistanceUnit.INCH)};
-        readout = sensors[2];
         if(loop % 5 != 0) return false;
+        sensors = new double[]{poleLeftSensor.getDistance(DistanceUnit.INCH), 0, poleRightSensor.getDistance(DistanceUnit.INCH)};
         switch (state) {
             case HIGH:
             case MIDDLE:

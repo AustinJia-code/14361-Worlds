@@ -170,10 +170,13 @@ public abstract class High extends LinearOpMode {
                 .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {
-                    bot.arm.setPosition(State.INTAKING);
+                    bot.arm.setPosition(State.LIFTED);
                     bot.claw.setPosition(State.INTAKING);
                 })
-                .addTemporalMarker(1.5, () ->{
+                .addTemporalMarker(0.75, () -> {
+                    bot.arm.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(1.75, () ->{
                     tapeLocalizer.relocalize();
                 })
                 .addTemporalMarker(1.7, () -> {

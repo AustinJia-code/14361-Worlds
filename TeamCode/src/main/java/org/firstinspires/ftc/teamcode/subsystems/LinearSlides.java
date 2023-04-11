@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.commands.*;
 
 import static org.firstinspires.ftc.teamcode.commands.State.*;
 
-import ftc.rogue.blacksmith.listeners.*;
-
 public class LinearSlides implements Subsystem {
 
     enum Mode {POSITION, POWER}
@@ -20,7 +18,7 @@ public class LinearSlides implements Subsystem {
     private DcMotorEx leftSlide, rightSlide;
 
     private LiftPID leftPID, rightPID;
-    private int HIGH = spoolChange(1410), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 5;
+    private int HIGH = spoolChange(1410), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
     private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
@@ -42,8 +40,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(3, 0, 1, 0, HIGH);
-        rightPID = new LiftPID(3, 0, 1, 0, HIGH);
+        leftPID = new LiftPID(2, .05, 1, 0, 515);
+        rightPID = new LiftPID(2, .05, 1, 0, 515);
 
         leftSlide.setPower(0);
         rightSlide.setPower(0);
@@ -200,6 +198,33 @@ public class LinearSlides implements Subsystem {
         return(leftSlide.getCurrentPosition() + " " + rightSlide.getCurrentPosition() + " " + target + " " + offset);
     }
 
+    public boolean isClose(){
+        return rightPID.isClose();
+    }
+
+    public int getTarget(){
+        return rightSlide.getTargetPosition();
+    }
+    public double getLeftCurrent(){
+        return leftSlide.getCurrent(CurrentUnit.AMPS);
+    }
+
+    public double getRightCurrent(){
+        return rightSlide.getCurrent(CurrentUnit.AMPS);
+    }
+
+    public int getLeftPosition(){
+        return leftSlide.getCurrentPosition();
+    }
+
+    public int getRightPosition(){
+        return rightSlide.getCurrentPosition();
+    }
+
+    public double getPower(){
+        return rightSlide.getPower();
+    }
+
     public void reset(){
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -218,6 +243,6 @@ public class LinearSlides implements Subsystem {
     }
 
     public static int spoolChange(int height){
-        return (int) (height / 1.2 / 384.5 * 145.1);
+            return (int) (height / 1.2 / 384.5 * 145.1);
     }
 }

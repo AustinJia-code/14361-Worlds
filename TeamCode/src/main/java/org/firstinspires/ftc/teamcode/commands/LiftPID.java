@@ -9,6 +9,9 @@ public class LiftPID {
     private double totalError, lastError, lastTime;
     private ArrayList<Double> errors;
     private int target, max;
+    private boolean isClose;
+    private double I2CDeadzone = 30;
+    private double deadzone = 7;
 
     public LiftPID(double kp, double ki, double kd, int target, int max) {
         this.kp = kp;
@@ -25,8 +28,7 @@ public class LiftPID {
     }
 
     public double getI(double error) {
-        if (Math.abs(error) < 1)
-            totalError = 0;
+        if (Math.abs(error) < 0.001) totalError = 0;
         return ki * totalError;
     }
 
@@ -69,6 +71,11 @@ public class LiftPID {
         else if (position - target > 100) return -0.75;
         else if (position - target > 0) return -0.5;
          */
+        if(Math.abs(position-target) < I2CDeadzone) isClose = true;
+        else isClose = false;
+
+        if(Math.abs(position-target) < deadzone) return 0;
+
         if((position > target) && (target < 250)) setP(10);
         else setP(3);
 
@@ -78,6 +85,8 @@ public class LiftPID {
     public int getTarget(){
         return target;
     }
+
+    public boolean isClose(){ return isClose;}
 
     public ArrayList<Double> aman(){
         return errors;

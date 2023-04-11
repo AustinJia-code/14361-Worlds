@@ -10,11 +10,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 public class TapeLocalizer implements Subsystem {
     private ColorRangeSensor one, two, three, four, five;
     private SampleMecanumDrive drive;
-    private RevIMU imu;
-
     public final double OFFSET = -1;
-    public final double BLUE_THRESH = 20;
-    public final double RED_THRESH = 20;
+    public final double BLUE_THRESH = 90;
+    public final double RED_THRESH = 100;
 
     private ALLIANCE alliance;
 
@@ -30,9 +28,6 @@ public class TapeLocalizer implements Subsystem {
         //three = hardwareMap.get(ColorRangeSensor.class, "three");
         four = hardwareMap.get(ColorRangeSensor.class, "four");
         five = hardwareMap.get(ColorRangeSensor.class, "five");
-
-        imu = new RevIMU(hardwareMap);
-        imu.init();
     }
 
     public void relocalize(){
@@ -41,8 +36,7 @@ public class TapeLocalizer implements Subsystem {
         mean = relocalizeNeutral();
 
         Pose2d curPose = drive.getPoseEstimate();
-        drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, curPose.getHeading()));
-        drive.setExternalHeading(-imu.getHeading()-Math.toRadians(90));
+        drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, drive.getRawExternalHeading()/*Math.toRadians(-imu.getHeading()+90))*/));
     }
 
     public double relocalizeNeutral(){

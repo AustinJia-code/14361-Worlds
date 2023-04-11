@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys.*;
 import com.qualcomm.hardware.lynx.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
@@ -27,11 +28,13 @@ public abstract class BasedAbstract extends OpMode {
     private GamepadEx driver, operator;
     private VoltageReader voltageReader;
     int alliance;
+    boolean canCheckI2C;
     int loop;
-    double multiplier;
+    double multiplier, loopTime;
     private boolean curRT, oldRT, curLT, oldLT, tilt, recess, locked;
     int section = 0;
     List<LynxModule> allHubs;
+    ColorRangeSensor one;
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
 
@@ -66,7 +69,7 @@ public abstract class BasedAbstract extends OpMode {
         runtime = new ElapsedTime();
 
         telemetry.addLine("Status: Initialized");
-        telemetry.addData("Alliance:", allianceToString());
+        telemetry.addLine("Alliance: " + allianceToString());
         telemetry.update();
     }
 
@@ -78,7 +81,7 @@ public abstract class BasedAbstract extends OpMode {
     @Override
     public void loop() {
         multiplier = 1;
-        if(loop++ == 100000) loop = 0;
+        if(loop++ == 10000) loop = 0;
 
         double startTime = System.currentTimeMillis();
 
@@ -190,9 +193,11 @@ public abstract class BasedAbstract extends OpMode {
                 if (bot.getState() == BACKWARDS) bot.setPosition(LIFTED);
                 else bot.setPosition(INTAKING);
             }
+            /*
             if (operator.isDown(Button.RIGHT_BUMPER)) {                           // Right Bumper = Opens Claw, Goes to Floor
                 bot.claw.intakeUpdate();
             }
+            */
             if (operator.wasJustReleased(Button.RIGHT_BUMPER)) {                            // Left Bumper = Closes Claw, Goes to Ground
                 bot.claw.close();
             }
@@ -263,38 +268,67 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         if(bot.getState() != INTAKING && bot.getState() != BACKWARDS && bot.getState() != LOW) {
-            if(recess) locked = bot.claw.behindCheck(bot.getState(), loop, bot.arm, bot.slide);
-            if(tilt && !locked) bot.claw.outtakeUpdate(bot.getState(), loop);
+            //if(Math.abs(bot.slide.getPower()) < 0.03 ) {
+            if(bot.slide.isClose()){
+                canCheckI2C = true;
+                if (recess) locked = bot.claw.behindCheck(bot.getState(), loop, bot.arm, bot.slide);
+                if (tilt && !locked) bot.claw.outtakeUpdate(bot.getState(), loop);
+            }else{
+                canCheckI2C = false;
+            }
         }
         bot.slide.powerSlides();
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
-        double loopTime = System.currentTimeMillis() -startTime;
+        loopTime = System.currentTimeMillis() -startTime;
         // ---------------------------- TELEMETRY ---------------------------- //
-        telemetry.addLine("Runtime: " + runtime.toString());
-        telemetry.addLine("Looptime: " + loopTime);
-        telemetry.addLine("Multiplier: " + multiplier);
-        telemetry.addLine("Tilt: " + tilt);
-        telemetry.addLine("Recess " + recess);
-        telemetry.addLine("TSE: " + section%4);
-        //telemetry.addData("Target", bot.slide.getTarget());
-        //telemetry.addData("Real", bot.slide.getReal());
-        telemetry.addData("Voltage", voltageReader.getVoltage());
-        for(int i = 0; i < allHubs.size(); i++){
-            telemetry.addData("Current - Hub" + i, allHubs.get(i).getCurrent(CurrentUnit.AMPS));
-        }
-        telemetry.addData("Mode: ", bot.drivetrain.getMode());
-        telemetry.addData("Angle: ", bot.drivetrain.getHeading());
-
-        //telemetry.log().add(runtime.milliseconds() + "");
-        //telemetry.log().add(voltageReader.getVoltage() + "");
-        //telemetry.log().add(allHubs.get(0).getCurrent(CurrentUnit.AMPS) + "");
-
+        //teleTelemetry();
+        //hubPowerTelemetry();
+        //miscTelemetry();
+        slideTelemetry();
     }
 
     @Override
     public void stop() {
         bot.setPosition(INTAKING);
         super.stop();
+    }
+
+    public void teleTelemetry(){
+        telemetry.addLine("Runtime: " + runtime.toString());
+        telemetry.addLine("Looptime: " + loopTime);
+        telemetry.addLine("Multiplier: " + multiplier);
+        telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
+        telemetry.addLine("Recess " + (recess && canCheckI2C));
+        telemetry.addLine("TSE: " + section%4);
+        telemetry.addData("Mode: ", bot.drivetrain.getMode());
+    }
+
+    public void hubPowerTelemetry(){
+        telemetry.addData("Voltage", voltageReader.getVoltage());
+        for(int i = 0; i < allHubs.size(); i++){
+            telemetry.addData("Current - Hub" + i, allHubs.get(i).getCurrent(CurrentUnit.AMPS));
+        }
+    }
+    public void slideTelemetry(){
+        telemetry.addData("Target: ", bot.slide.getTarget());
+        telemetry.addData("Power: ", bot.slide.getPower());
+
+        telemetry.addData("LCurrent: ", bot.slide.getLeftCurrent());
+        telemetry.addData("RCurrent: ", bot.slide.getRightCurrent());
+
+        telemetry.addData("LPosition: ", bot.slide.getRightPosition());
+        telemetry.addData("RPosition: ", bot.slide.getLeftPosition());
+
+        telemetry.addData("Looptime: ", loopTime);
+
+        telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
+
+        telemetry.addLine("Behind Right: " + bot.claw.getReadout());
+    }
+
+    public void miscTelemetry(){
+        telemetry.addData("Red: ", one.red());
+        telemetry.addData("Blue: ", one.blue());
     }
 }
