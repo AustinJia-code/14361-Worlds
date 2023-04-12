@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.*;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.qualcomm.hardware.bosch.*;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
@@ -14,7 +15,7 @@ public class TapeLocalizer implements Subsystem {
     public final double BLUE_THRESH = 90;
     public final double RED_THRESH = 100;
 
-    private ALLIANCE alliance;
+    private BNO055IMU imu;
 
     enum ALLIANCE{
         RED, BLUE
@@ -28,6 +29,11 @@ public class TapeLocalizer implements Subsystem {
         //three = hardwareMap.get(ColorRangeSensor.class, "three");
         four = hardwareMap.get(ColorRangeSensor.class, "four");
         five = hardwareMap.get(ColorRangeSensor.class, "five");
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
     }
 
     public void relocalize(){
@@ -36,7 +42,7 @@ public class TapeLocalizer implements Subsystem {
         mean = relocalizeNeutral();
 
         Pose2d curPose = drive.getPoseEstimate();
-        drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, drive.getRawExternalHeading()/*Math.toRadians(-imu.getHeading()+90))*/));
+        drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, imu.getAngularOrientation().firstAngle/*Math.toRadians(-imu.getHeading()+90))*/));
     }
 
     public double relocalizeNeutral(){
