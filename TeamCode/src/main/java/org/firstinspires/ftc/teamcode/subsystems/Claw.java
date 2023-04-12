@@ -4,12 +4,14 @@ import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.commands.State;
+import org.firstinspires.ftc.teamcode.commands.*;
+
+import java.util.*;
 
 public class Claw implements Subsystem {
 
     private Servo claw, wrist;
-    private DistanceSensor behindLeftSensor, behindRightSensor, coneDistance, poleLeftSensor, poleRightSensor                       ;
+    private I2CMonitor behindLeftSensor, behindRightSensor, poleLeftSensor, poleRightSensor                       ;
     private int supinatedAngle = 35;
     private int pronatedAngle = 215;
     private int wristAngle = 35;
@@ -28,13 +30,11 @@ public class Claw implements Subsystem {
         claw.setDirection(Servo.Direction.REVERSE);
         wrist = hardwareMap.servo.get("wrist");
 
-        behindLeftSensor = hardwareMap.get(DistanceSensor.class, "behind left");
-        behindRightSensor = hardwareMap.get(DistanceSensor.class, "behind right");
+        behindLeftSensor = new I2CMonitor(hardwareMap.get(DistanceSensor.class, "behind left"));
+        behindRightSensor = new I2CMonitor(hardwareMap.get(DistanceSensor.class, "behind right"));
 
-        poleLeftSensor = hardwareMap.get(DistanceSensor.class, "pole right");
-        poleRightSensor = hardwareMap.get(DistanceSensor.class, "pole left");
-
-        //coneDistance = hardwareMap.get(DistanceSensor.class, "cone sensor");
+        poleLeftSensor = new I2CMonitor(hardwareMap.get(DistanceSensor.class, "pole right"));
+        poleRightSensor = new I2CMonitor(hardwareMap.get(DistanceSensor.class, "pole left"));
     }
 
     public void setPosition(State state){
@@ -169,7 +169,7 @@ public class Claw implements Subsystem {
     //!!!flip caching until coen not detected to flip??
     public boolean behindCheck(State state, int loop, Arm arm, LinearSlides slide){
         if(loop % 5 != 0) return false;
-        sensors = new double[]{behindLeftSensor.getDistance(DistanceUnit.INCH), 0, behindRightSensor.getDistance(DistanceUnit.INCH)};
+        sensors = new double[]{behindLeftSensor.check(), 0, behindRightSensor.check()};
         readout = sensors[2];
         switch (state) {
             case HIGH:
@@ -214,7 +214,7 @@ public class Claw implements Subsystem {
 
     public boolean outtakeUpdate(State state, int loop){
         if(loop % 5 != 0) return false;
-        sensors = new double[]{poleLeftSensor.getDistance(DistanceUnit.INCH), 0, poleRightSensor.getDistance(DistanceUnit.INCH)};
+        sensors = new double[]{poleLeftSensor.check(), 0, poleRightSensor.check()};
         switch (state) {
             case HIGH:
             case MIDDLE:
@@ -249,4 +249,14 @@ public class Claw implements Subsystem {
 
     public double getLeft() { return leftCount; }
     public double getRight() { return rightCount; }
+
+    public ArrayList<String> brokenSensors(){
+        ArrayList<String> broken = new ArrayList<>();
+        if(!behindLeftSensor.working()) broken.add("BL");
+        if(!behindRightSensor.working()) broken.add("BR");
+        if(!poleLeftSensor.working()) broken.add("L");
+        if(!poleRightSensor.working()) broken.add("R");
+
+        return broken;
+    }
 }

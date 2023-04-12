@@ -135,10 +135,17 @@ public abstract class BasedAbstract extends OpMode {
 
         if(driver.wasJustPressed(Button.A)){
             tilt = !tilt;
+            recess = !recess;
+        }
+
+        if(driver.wasJustPressed(Button.X)){
+            bot.claw.setLeft();
+            bot.arm.raise();
         }
 
         if(driver.wasJustPressed(Button.B)){
-            recess = !recess;
+            bot.claw.setRight();
+            bot.arm.raise();
         }
 
         if(driver.wasJustPressed(Button.LEFT_BUMPER)){
@@ -282,10 +289,10 @@ public abstract class BasedAbstract extends OpMode {
 
         loopTime = System.currentTimeMillis() -startTime;
         // ---------------------------- TELEMETRY ---------------------------- //
-        //teleTelemetry();
+        teleTelemetry();
         //hubPowerTelemetry();
-        //miscTelemetry();
-        slideTelemetry();
+        miscTelemetry();
+        //slideTelemetry();
     }
 
     @Override
@@ -298,8 +305,7 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addLine("Runtime: " + runtime.toString());
         telemetry.addLine("Looptime: " + loopTime);
         telemetry.addLine("Multiplier: " + multiplier);
-        telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
-        telemetry.addLine("Recess " + (recess && canCheckI2C));
+        telemetry.addLine("I2Cs: " + (tilt && canCheckI2C));
         telemetry.addLine("TSE: " + section%4);
         telemetry.addData("Mode: ", bot.drivetrain.getMode());
     }
@@ -328,7 +334,10 @@ public abstract class BasedAbstract extends OpMode {
     }
 
     public void miscTelemetry(){
-        telemetry.addData("Red: ", one.red());
-        telemetry.addData("Blue: ", one.blue());
+        //telemetry.addData("Red: ", one.red());
+        //telemetry.addData("Blue: ", one.blue());
+        for(String s : bot.claw.brokenSensors()){
+            telemetry.addData("Broken: ", s);
+        }
     }
 }
