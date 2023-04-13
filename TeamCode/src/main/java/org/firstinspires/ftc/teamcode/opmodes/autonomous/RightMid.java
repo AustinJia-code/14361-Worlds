@@ -19,6 +19,7 @@ public class RightMid extends Mid {
     public static Pose2d PARK_RIGHT = new Pose2d(60, -12.5, toRadians(0));
 
     public void build(){
+        side = 1;
         SCORING_POSITION = new Pose2d(29,-18.25, toRadians(225));
         STORAGE_POSITION = new Pose2d(52.25, -10.5, toRadians(0));
 

@@ -18,6 +18,7 @@ public class LeftMidNoLoc extends Mid {
     public static Pose2d PARK_RIGHT = new Pose2d(-29, -15, toRadians(90));
 
     public void build(){
+        side = -1;
         SCORING_POSITION = new Pose2d(-27.75,-20.25, toRadians(-45));
         STORAGE_POSITION = new Pose2d(-50.5, -11.5, toRadians(180));
 

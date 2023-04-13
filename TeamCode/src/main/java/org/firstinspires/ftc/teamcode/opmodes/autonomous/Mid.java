@@ -29,6 +29,8 @@ public abstract class Mid extends LinearOpMode {
     TrajectorySequence StorageToScore1, StorageToScore2, StorageToScore3, StorageToScore4, StorageToScore5;
     TrajectorySequence WaitAtScore1, WaitAtScore2, WaitAtScore3, WaitAtScore4, WaitAtScore5, WaitAtScore6, WaitAtStorage1, WaitAtStorage2, WaitAtStorage3, WaitAtStorage4, WaitAtStorage5;
     TrajectorySequence ParkLeft, ParkRight, ParkMiddle;
+
+    int side;
     Pose2d SCORING_POSITION, STORAGE_POSITION;
     TapeLocalizer tapeLocalizer;
 
@@ -49,7 +51,7 @@ public abstract class Mid extends LinearOpMode {
         setCameraPosition();
         initCam();
 
-        tapeLocalizer = new TapeLocalizer(drive, hardwareMap);
+        tapeLocalizer = new TapeLocalizer(drive, hardwareMap, side);
         while (!isStarted()) {
             telemetry.addData("STATUS:", "INITIALIZED");
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());

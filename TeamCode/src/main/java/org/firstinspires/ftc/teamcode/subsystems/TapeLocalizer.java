@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 public class TapeLocalizer implements Subsystem {
     private ColorRangeSensor one, two, three, four, five;
     private SampleMecanumDrive drive;
-    public final double OFFSET = -1;
+    public double OFFSET = -1;
     public final double BLUE_THRESH = 90;
     public final double RED_THRESH = 100;
 
@@ -21,8 +21,10 @@ public class TapeLocalizer implements Subsystem {
         RED, BLUE
     }
 
-    public TapeLocalizer(SampleMecanumDrive drive, HardwareMap hardwareMap) {
+    public TapeLocalizer(SampleMecanumDrive drive, HardwareMap hardwareMap, int side) {
         this.drive = drive;
+
+        OFFSET *= side;
 
         one = hardwareMap.get(ColorRangeSensor.class, "one");
         two = hardwareMap.get(ColorRangeSensor.class, "two");

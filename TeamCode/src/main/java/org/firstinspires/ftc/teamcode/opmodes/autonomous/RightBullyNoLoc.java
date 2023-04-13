@@ -21,6 +21,7 @@ public class RightBullyNoLoc extends High {
     public static Pose2d PARK_RIGHT = new Pose2d(58, -12, toRadians(-90));
 
     public void build(){
+        side = 1;
         SCORING_POSITION = new Pose2d(23.75,-6, toRadians(135));
         STORAGE_POSITION = new Pose2d(48.2, -11, toRadians(0));
 

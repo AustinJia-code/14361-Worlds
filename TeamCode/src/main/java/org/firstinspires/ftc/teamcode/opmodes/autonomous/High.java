@@ -31,7 +31,7 @@ public abstract class High extends LinearOpMode {
     TrajectorySequence WaitAtScore1, WaitAtScore2, WaitAtScore3, WaitAtScore4, WaitAtScore5, WaitAtScore6, WaitAtStorage1, WaitAtStorage2, WaitAtStorage3, WaitAtStorage4, WaitAtStorage5;
     TrajectorySequence ParkLeft, ParkRight, ParkMiddle;
     Pose2d SCORING_POSITION, STORAGE_POSITION;
-    ;
+    int side;
 
     @Override
     public void runOpMode(){
@@ -56,7 +56,7 @@ public abstract class High extends LinearOpMode {
         setCameraPosition();
         initCam();
 
-        tapeLocalizer = new TapeLocalizer(drive, hardwareMap);
+        tapeLocalizer = new TapeLocalizer(drive, hardwareMap, side);
 
         while (!isStarted()) {
             telemetry.addData("STATUS:", "INITIALIZED");
@@ -171,6 +171,9 @@ public abstract class High extends LinearOpMode {
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {
                     bot.arm.setPosition(State.LIFTED);
+                    bot.claw.open();
+                })
+                .addTemporalMarker(0.5, () -> {
                     bot.claw.setPosition(State.INTAKING);
                 })
                 .addTemporalMarker(0.75, () -> {
