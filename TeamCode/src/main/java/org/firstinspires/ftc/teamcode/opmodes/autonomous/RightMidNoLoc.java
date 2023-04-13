@@ -1,17 +1,16 @@
-package org.firstinspires.ftc.teamcode.opmodes.OldenCodes.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 //still tuning
 import com.acmerobotics.roadrunner.geometry.*;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import static java.lang.Math.*;
 
 import org.firstinspires.ftc.teamcode.commands.*;
+import org.firstinspires.ftc.teamcode.subsystems.*;
 
-@Disabled
-@Autonomous(name = "Right Mid Shallow", group = "Final")
-public class RoboPlayersRightMid extends ShallowMid {
+@Autonomous(name = "\uD83D\uDC80 NO LOC \uD83D\uDC17 Right Mid \uD83D\uDC17", group = "Final")
+public class RightMidNoLoc extends Mid {
 
     private double wait = 0.5;
-
     private double waitAtStorage = 0;
     private double waitAtScore = 0;
     public static Pose2d INIT = new Pose2d(35.5, -62.5, toRadians(-90));
@@ -20,8 +19,8 @@ public class RoboPlayersRightMid extends ShallowMid {
     public static Pose2d PARK_RIGHT = new Pose2d(60, -12.5, toRadians(0));
 
     public void build(){
-        SCORING_POSITION = new Pose2d(32,-19.5, toRadians(200));
-        STORAGE_POSITION = new Pose2d(52.5, -10.5, toRadians(0));
+        SCORING_POSITION = new Pose2d(29,-18.25, toRadians(225));
+        STORAGE_POSITION = new Pose2d(52.25, -10.5, toRadians(0));
 
         drive.setPoseEstimate(INIT);
 
@@ -34,39 +33,38 @@ public class RoboPlayersRightMid extends ShallowMid {
                 .addTemporalMarker(2, () -> {
                     bot.setPosition(State.MIDDLE);
                 })
-                .addTemporalMarker(5.4, () -> {
+                .addTemporalMarker(4.6, () -> {
                     bot.arm.slamThatJawn();
                 })
-                .back(65)
-                .forward(15)
+                .back(50)
                 .turn(Math.toRadians(130))
                 .back(8)
                 .resetConstraints()
                 .build();
         //WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = ScoreToStorage(ScorePreload, 0, 0, 0);
+        ScoreToStorage1 = ScoreToStorageNoLoc(ScorePreload, 0, 0, 0);
 
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(ScoreToStorage1, 0, 0, 0);
         //WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
 
-        ScoreToStorage2 = ScoreToStorage(StorageToScore1, 0.5, 0, 0);
+        ScoreToStorage2 = ScoreToStorageNoLoc(StorageToScore1, 0.5, 0, 0);
         WaitAtStorage2 = waitSequence(ScoreToStorage2, waitAtStorage, true);
         StorageToScore2 = StorageToScore(ScoreToStorage2, 0, 0.5, 0);
         //WaitAtScore3 = waitSequence(StorageToScore2, waitAtScore, false);
 
-        ScoreToStorage3 = ScoreToStorage(StorageToScore2, 0, 0.5, 0);
+        ScoreToStorage3 = ScoreToStorageNoLoc(StorageToScore2, 0, 0, 0);
         WaitAtStorage3 = waitSequence(ScoreToStorage3, waitAtStorage, true);
         StorageToScore3 = StorageToScore(ScoreToStorage3, 0, 1.5, 0);
         //WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(StorageToScore3, 0, 1, 0);
+        ScoreToStorage4 = ScoreToStorageNoLoc(StorageToScore3, 0, 0.1, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
         StorageToScore4 = StorageToScore(ScoreToStorage4, -0.5, 1.5, 0);
         //WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(StorageToScore4, 0, 1, 0);
+        ScoreToStorage5 = ScoreToStorageNoLoc(StorageToScore4, 0, 0, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(ScoreToStorage5, -0.75, 2.0, 0);
         //WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
@@ -89,7 +87,7 @@ public class RoboPlayersRightMid extends ShallowMid {
                 })
                 .forward(6)
                 .lineToLinearHeading(new Pose2d(PARK_MIDDLE.vec(), toRadians(0)))
-                .back(23.5)
+                .back(22.5)
                 .strafeRight(8)
                 .waitSeconds(1)
                 .build();

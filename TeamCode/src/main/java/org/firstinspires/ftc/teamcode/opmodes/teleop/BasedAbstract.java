@@ -289,10 +289,10 @@ public abstract class BasedAbstract extends OpMode {
 
         loopTime = System.currentTimeMillis() -startTime;
         // ---------------------------- TELEMETRY ---------------------------- //
-        teleTelemetry();
+        //teleTelemetry();
         //hubPowerTelemetry();
-        miscTelemetry();
-        //slideTelemetry();
+        //miscTelemetry();
+        slideTelemetry();
     }
 
     @Override
@@ -320,17 +320,17 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addData("Target: ", bot.slide.getTarget());
         telemetry.addData("Power: ", bot.slide.getPower());
 
-        telemetry.addData("LCurrent: ", bot.slide.getLeftCurrent());
-        telemetry.addData("RCurrent: ", bot.slide.getRightCurrent());
+        //telemetry.addData("LCurrent: ", bot.slide.getLeftCurrent());
+        //telemetry.addData("RCurrent: ", bot.slide.getRightCurrent());
 
-        telemetry.addData("LPosition: ", bot.slide.getRightPosition());
+        //telemetry.addData("LPosition: ", bot.slide.getRightPosition());
         telemetry.addData("RPosition: ", bot.slide.getLeftPosition());
 
         telemetry.addData("Looptime: ", loopTime);
 
-        telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
+        //telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
 
-        telemetry.addLine("Behind Right: " + bot.claw.getReadout());
+        //telemetry.addLine("Behind Right: " + bot.claw.getReadout());
     }
 
     public void miscTelemetry(){

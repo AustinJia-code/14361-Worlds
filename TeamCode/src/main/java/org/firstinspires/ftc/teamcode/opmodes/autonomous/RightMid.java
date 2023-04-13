@@ -7,7 +7,7 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
-@Autonomous(name = "Right Mid", group = "Final")
+@Autonomous(name = "\uD83D\uDC17 Right Mid \uD83D\uDC17", group = "Final")
 public class RightMid extends Mid {
 
     private double wait = 0.5;

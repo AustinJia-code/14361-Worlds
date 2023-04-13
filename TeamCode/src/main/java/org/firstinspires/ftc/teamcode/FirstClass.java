@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
+@Disabled
 @TeleOp(name="First Program")
 public class FirstClass extends OpMode{
     private DcMotor Jazzy;

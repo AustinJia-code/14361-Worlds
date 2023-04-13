@@ -186,6 +186,24 @@ public abstract class High extends LinearOpMode {
                 .forward(11.5)
                 .build();
     }
+    public TrajectorySequence ScoreToStorageNoLoc(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
+        return drive.trajectorySequenceBuilder(preceding.end())
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
+                .setReversed(false)
+                .addTemporalMarker(0.2, () -> {
+                    bot.arm.setPosition(State.LIFTED);
+                    bot.claw.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(0.75, () -> {
+                    bot.arm.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(1.7, () -> {
+                    bot.claw.close();
+                })
+                .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
+                .forward(11.5)
+                .build();
+    }
     public TrajectorySequence StorageToScore(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
                 .setConstraints(Constrainer.vel(40), Constrainer.accel(40))

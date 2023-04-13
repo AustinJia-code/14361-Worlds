@@ -42,7 +42,8 @@ public class TapeLocalizer implements Subsystem {
         mean = relocalizeNeutral();
 
         Pose2d curPose = drive.getPoseEstimate();
-        drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, imu.getAngularOrientation().firstAngle/*Math.toRadians(-imu.getHeading()+90))*/));
+        //drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, Math.toRadians(-imu.getAngularOrientation().firstAngle)));
+        drive.setPoseEstimate(new Pose2d(curPose.getX(), curPose.getY() + mean * OFFSET, curPose.getHeading()));
     }
 
     public double relocalizeNeutral(){

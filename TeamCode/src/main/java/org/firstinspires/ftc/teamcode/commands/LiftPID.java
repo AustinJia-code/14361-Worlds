@@ -11,7 +11,7 @@ public class LiftPID {
     private int target, max;
     private boolean isClose;
     private double I2CDeadzone = 30;
-    private double deadzone = 7;
+    private double deadzone = 3;
 
     public LiftPID(double kp, double ki, double kd, int target, int max) {
         this.kp = kp;
@@ -47,6 +47,7 @@ public class LiftPID {
     public void setP(double p){
         kp = p;
     }
+    public void setI(double i){ ki = i;}
 
     public double getCorrection(double error) {
         if (Math.abs(error) < 0.001) {
@@ -76,8 +77,8 @@ public class LiftPID {
 
         if(Math.abs(position-target) < deadzone) return 0;
 
-        if((position > target) && (target < 250)) setP(10);
-        else setP(3);
+        if((position > target) && (target < 100)) setI(0.2);
+        else setI(0.03);
 
         return getCorrection((target-position)/max);
     }

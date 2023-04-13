@@ -7,8 +7,8 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
-@Autonomous(name = "\uD83D\uDDFF Left Mid \uD83D\uDDFF", group = "Final")
-public class LeftMid extends Mid {
+@Autonomous(name = "\uD83D\uDC80 NO LOC \uD83D\uDDFF Left Mid \uD83D\uDDFF", group = "Final")
+public class LeftMidNoLoc extends Mid {
 
     private double waitAtStorage = 0.1;
     private double waitAtScore = 0.1;
@@ -39,28 +39,28 @@ public class LeftMid extends Mid {
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = ScoreToStorage(WaitAtScore1, 0, 0.5, 0);
+        ScoreToStorage1 = ScoreToStorageNoLoc(WaitAtScore1, 0, 0.5, 0);
 
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(WaitAtStorage1, 0, 0, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
 
-        ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, -0.25, 0);
+        ScoreToStorage2 = ScoreToStorageNoLoc(WaitAtScore2, 0, -0.25, 0);
         WaitAtStorage2 = waitSequence(ScoreToStorage2, waitAtStorage, true);
         StorageToScore2 = StorageToScore(WaitAtStorage2, 0, -1, 0);
         WaitAtScore3 = waitSequence(StorageToScore2, waitAtScore, false);
 
-        ScoreToStorage3 = ScoreToStorage(WaitAtScore3, 0, -1.5, 0);
+        ScoreToStorage3 = ScoreToStorageNoLoc(WaitAtScore3, 0, -1.5, 0);
         WaitAtStorage3 = waitSequence(ScoreToStorage3, waitAtStorage, true);
         StorageToScore3 = StorageToScore(WaitAtStorage3, -0.5, -3.0, 0);
         WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 0, -2, 0);
+        ScoreToStorage4 = ScoreToStorageNoLoc(WaitAtScore4, 0, -2, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
         StorageToScore4 = StorageToScore(WaitAtStorage4, 0, -4.25, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0, -3, 0);
+        ScoreToStorage5 = ScoreToStorageNoLoc(WaitAtScore5, 0, -3, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(WaitAtStorage5, 0, -6 , 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);

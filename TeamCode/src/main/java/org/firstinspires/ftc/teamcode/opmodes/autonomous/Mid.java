@@ -30,6 +30,7 @@ public abstract class Mid extends LinearOpMode {
     TrajectorySequence WaitAtScore1, WaitAtScore2, WaitAtScore3, WaitAtScore4, WaitAtScore5, WaitAtScore6, WaitAtStorage1, WaitAtStorage2, WaitAtStorage3, WaitAtStorage4, WaitAtStorage5;
     TrajectorySequence ParkLeft, ParkRight, ParkMiddle;
     Pose2d SCORING_POSITION, STORAGE_POSITION;
+    TapeLocalizer tapeLocalizer;
 
     @Override
     public void runOpMode(){
@@ -48,6 +49,7 @@ public abstract class Mid extends LinearOpMode {
         setCameraPosition();
         initCam();
 
+        tapeLocalizer = new TapeLocalizer(drive, hardwareMap);
         while (!isStarted()) {
             telemetry.addData("STATUS:", "INITIALIZED");
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
@@ -164,6 +166,22 @@ public abstract class Mid extends LinearOpMode {
 
     }
     public TrajectorySequence ScoreToStorage(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
+        return drive.trajectorySequenceBuilder(preceding.end())
+                .setReversed(false)
+                .addTemporalMarker(0.2, () -> {
+                    bot.arm.setPosition(State.INTAKING);
+                    bot.claw.setPosition(State.INTAKING);
+                })
+                .addTemporalMarker(1.8, () -> {
+                    tapeLocalizer.relocalize();
+                    bot.claw.close();
+                })
+                .splineTo(new Vector2d(STORAGE_POSITION.getX()+xOffset, STORAGE_POSITION.getY()+yOffset), STORAGE_POSITION.getHeading()+headingOffset)
+                .forward(11)
+                .build();
+    }
+
+    public TrajectorySequence ScoreToStorageNoLoc(TrajectorySequence preceding, double xOffset, double yOffset, double headingOffset){
         return drive.trajectorySequenceBuilder(preceding.end())
                 .setReversed(false)
                 .addTemporalMarker(0.2, () -> {

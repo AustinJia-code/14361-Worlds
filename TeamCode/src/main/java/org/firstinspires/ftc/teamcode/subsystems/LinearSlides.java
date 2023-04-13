@@ -40,11 +40,11 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(2, .05, 1, 0, 515);
-        rightPID = new LiftPID(2, .05, 1, 0, 515);
+        leftPID = new LiftPID(2.5, 0.03, 1, 0, 515);
+        rightPID = new LiftPID(2.5, 0.03, 1, 0, 515);
 
         leftSlide.setPower(0);
-        rightSlide.setPower(0);
+        rightSlide.setPower( 0);
 
         rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
 
