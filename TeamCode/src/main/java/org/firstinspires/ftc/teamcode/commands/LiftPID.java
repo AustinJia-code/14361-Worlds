@@ -65,7 +65,7 @@ public class LiftPID {
         return output;
     }
 
-    public double getCorrectionPosition(double position){
+    public double getCorrectionPosition(double position, double voltage){
         /*
         if(Math.abs(position-target) < 10) return 0;
         else if(position - target > 200) return -1;
@@ -77,8 +77,8 @@ public class LiftPID {
 
         if(Math.abs(position-target) < deadzone) return 0;
 
-        if((position > target) && (target < 100)) setI(0.2);
-        else setI(0.03);
+        if((position > target) && (target < 70)) setP(3 / (13.8 / voltage));
+        else setP(10 / (13.8 / voltage));
 
         return getCorrection((target-position)/max);
     }

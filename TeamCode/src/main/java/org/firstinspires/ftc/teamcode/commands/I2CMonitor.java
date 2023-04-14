@@ -6,17 +6,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 public class I2CMonitor {
     DistanceSensor sensor;
-    int cutOff, defaultOutput;
+    int cutOff, defaultOutput, brokeCount;
     boolean on;
     double readValue;
 
     public I2CMonitor(DistanceSensor sensor, int cutOff, int defaultOutput){
+        on = true;
         this.sensor = sensor;
         this.cutOff = cutOff;
         this.defaultOutput = defaultOutput;
+        brokeCount = 0;
     }
 
     public I2CMonitor(DistanceSensor sensor){
+        on = true;
         this.sensor = sensor;
         this.cutOff = 30;
         this.defaultOutput = 15;
@@ -28,9 +31,8 @@ public class I2CMonitor {
             double startTime = System.currentTimeMillis();
             double temp = sensor.getDistance(DistanceUnit.INCH);
             if(System.currentTimeMillis()-startTime > cutOff){
-                ;
+                if(brokeCount++ > 5) ; on = false;
             }else{
-                on = false;
                 readValue = temp;
             }
         }

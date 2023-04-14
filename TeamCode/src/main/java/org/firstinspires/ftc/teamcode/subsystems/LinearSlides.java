@@ -40,8 +40,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(2.5, 0.03, 1, 0, 515);
-        rightPID = new LiftPID(2.5, 0.03, 1, 0, 515);
+        leftPID = new LiftPID(3, 0, 1, 0, 515);
+        rightPID = new LiftPID(3, 0, 1, 0, 515);
 
         leftSlide.setPower(0);
         rightSlide.setPower( 0);
@@ -144,8 +144,8 @@ public class LinearSlides implements Subsystem {
         }
     }
 
-    public void powerSlides(){
-        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition());
+    public void powerSlides(double voltage){
+        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition(), voltage);
 
         //power = stallCheck(power);
 

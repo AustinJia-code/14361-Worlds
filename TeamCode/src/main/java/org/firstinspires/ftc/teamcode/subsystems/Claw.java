@@ -76,11 +76,11 @@ public class Claw implements Subsystem {
             case 0:
                 claw.setPosition(toServoPosition(125));
             case 1:
-                claw.setPosition(toServoPosition(135));
-            case 2:
                 claw.setPosition(toServoPosition(140));
+            case 2:
+                claw.setPosition(toServoPosition(155));
             case 3:
-                claw.setPosition(toServoPosition(145));
+                claw.setPosition(toServoPosition(170));
         }
 
         open = true;

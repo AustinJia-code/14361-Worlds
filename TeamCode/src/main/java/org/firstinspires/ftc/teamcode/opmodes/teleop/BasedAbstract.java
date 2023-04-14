@@ -138,12 +138,12 @@ public abstract class BasedAbstract extends OpMode {
             recess = !recess;
         }
 
-        if(driver.wasJustPressed(Button.X)){
+        if(driver.wasJustPressed(Button.B)){
             bot.claw.setLeft();
             bot.arm.raise();
         }
 
-        if(driver.wasJustPressed(Button.B)){
+        if(driver.wasJustPressed(Button.X)){
             bot.claw.setRight();
             bot.arm.raise();
         }
@@ -274,7 +274,7 @@ public abstract class BasedAbstract extends OpMode {
             oldLT = false;
         }
 
-        if(bot.getState() != INTAKING && bot.getState() != BACKWARDS && bot.getState() != LOW) {
+        if(bot.getState() == MIDDLE || bot.getState() == HIGH) {
             //if(Math.abs(bot.slide.getPower()) < 0.03 ) {
             if(bot.slide.isClose()){
                 canCheckI2C = true;
@@ -284,14 +284,14 @@ public abstract class BasedAbstract extends OpMode {
                 canCheckI2C = false;
             }
         }
-        bot.slide.powerSlides();
+        bot.slide.powerSlides(voltageReader.getVoltage());
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
         loopTime = System.currentTimeMillis() -startTime;
         // ---------------------------- TELEMETRY ---------------------------- //
-        //teleTelemetry();
+        teleTelemetry();
         //hubPowerTelemetry();
-        //miscTelemetry();
+        miscTelemetry();
         slideTelemetry();
     }
 
@@ -326,7 +326,7 @@ public abstract class BasedAbstract extends OpMode {
         //telemetry.addData("LPosition: ", bot.slide.getRightPosition());
         telemetry.addData("RPosition: ", bot.slide.getLeftPosition());
 
-        telemetry.addData("Looptime: ", loopTime);
+        //telemetry.addData("Looptime: ", loopTime);
 
         //telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
 
