@@ -223,6 +223,7 @@ public abstract class High extends LinearOpMode {
                 })
                 .addTemporalMarker(1.65, ()->{
                     bot.arm.setPosition(State.HIGH);
+                    bot.arm.slamThatJawn(40);
                 })
                 /*
                 .addTemporalMarker(1.8, () -> {
@@ -230,7 +231,6 @@ public abstract class High extends LinearOpMode {
                 })
                 */
                 .addTemporalMarker(2, () -> {
-                    bot.arm.slamThatJawn();
                     bot.slide.setPosition(State.MIDDLE);
                 })
                 .back(11.5)
@@ -255,6 +255,7 @@ public abstract class High extends LinearOpMode {
                 })
                 .addTemporalMarker(1.65, ()->{
                     bot.arm.setPosition(State.HIGH);
+                    bot.arm.slamThatJawn(40);
                 })
                 /*
                 .addTemporalMarker(1.8, () -> {
@@ -262,7 +263,6 @@ public abstract class High extends LinearOpMode {
                 })
                 */
                 .addTemporalMarker(2, () -> {
-                    bot.arm.slamThatJawn();
                     bot.slide.setPosition(State.MIDDLE);
                 })
                 .back(11.5)

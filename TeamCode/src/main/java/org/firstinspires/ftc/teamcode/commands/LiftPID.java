@@ -5,16 +5,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 
 public class LiftPID {
-    private double kp, ki, kd;
+    private double kp, ki, kd, ogP, ogI;
     private double totalError, lastError, lastTime;
     private ArrayList<Double> errors;
     private int target, max;
     private boolean isClose;
     private double I2CDeadzone = 30;
-    private double deadzone = 3;
+    private double deadzone = 5;
 
     public LiftPID(double kp, double ki, double kd, int target, int max) {
+        this.ogP = kp;
         this.kp = kp;
+        this.ogI = ki;
         this.ki = ki;
         this.kd = kd;
         lastTime = 0;
@@ -65,20 +67,23 @@ public class LiftPID {
         return output;
     }
 
+    public void clearError(){
+        totalError = 0;
+    }
+
     public double getCorrectionPosition(double position, double voltage){
-        /*
-        if(Math.abs(position-target) < 10) return 0;
-        else if(position - target > 200) return -1;
-        else if (position - target > 100) return -0.75;
-        else if (position - target > 0) return -0.5;
-         */
+        setP(ogP / (13.8 / voltage));
+
         if(Math.abs(position-target) < I2CDeadzone) isClose = true;
         else isClose = false;
 
-        if(Math.abs(position-target) < deadzone) return 0;
+        if(Math.abs(position-target) <= deadzone || ((target == 0) && position < target)){
+            totalError = 0;
+            return 0;
+        }
 
-        if((position > target) && (target < 70)) setP(3 / (13.8 / voltage));
-        else setP(10 / (13.8 / voltage));
+        if((target < 20)) setI(ogI);
+        else setI(0);
 
         return getCorrection((target-position)/max);
     }

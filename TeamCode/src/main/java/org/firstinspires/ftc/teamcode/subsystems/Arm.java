@@ -89,6 +89,10 @@ public class Arm implements Subsystem {
         setArms(SCORING+30);
     }
 
+    public void slamThatJawn(int num){
+        setArms(SCORING+num);
+    }
+
     public void keep(){ setArms(SCORING); }
     public void raise(){ setRaised(); }
 

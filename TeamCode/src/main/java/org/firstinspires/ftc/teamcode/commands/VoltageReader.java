@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class VoltageReader {
 
@@ -21,6 +22,13 @@ public class VoltageReader {
     }
 
     public double getVoltage(){
-        return hardwareMap.voltageSensor.iterator().next().getVoltage();
+        double result = Double.POSITIVE_INFINITY;
+
+        for(VoltageSensor sensor : hardwareMap.voltageSensor){
+            double voltage = sensor.getVoltage();
+            if(voltage > 0) result = Math.min(result, voltage);
+        }
+
+        return result;
     }
 }

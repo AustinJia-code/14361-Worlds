@@ -183,8 +183,11 @@ public class Claw implements Subsystem {
 
                     noneCount++; leftCount = 0; rightCount = 0;
 
-                    if(noneCount > 1) slide.keep();
-                    if(noneCount > 2) arm.keep();
+                    if(noneCount > 1) {
+                        slide.keep();
+                        arm.keep();
+                    }
+
                     return false;
                 } else if (rightDetected) {
                     setLeft();

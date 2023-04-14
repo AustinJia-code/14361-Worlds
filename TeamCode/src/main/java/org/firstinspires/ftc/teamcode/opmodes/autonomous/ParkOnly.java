@@ -7,13 +7,12 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.teamcode.commands.SleeveDetection.*;
 
 //UNTUNED
-@Disabled
 @Autonomous(name = "ඞ Vent ඞ", group = "Final")
 public class ParkOnly extends High {
 
     public static Pose2d INIT = new Pose2d(35, -65, toRadians(-90));
-    public static Pose2d PARK_LEFT = new Pose2d(12, -35, toRadians(-90));
-    public static Pose2d PARK_RIGHT = new Pose2d(60, -35, toRadians(-90));
+    public static Pose2d PARK_LEFT = new Pose2d(12, -36.5, toRadians(-90));
+    public static Pose2d PARK_RIGHT = new Pose2d(60, -36.5, toRadians(-90));
     //public static Pose2d PARK_MIDDLE = new Pose2d(35, -35, toRadians(-90));
 
     @Override
@@ -36,7 +35,7 @@ public class ParkOnly extends High {
         drive.setPoseEstimate(INIT);
 
         ParkMiddle = drive.trajectorySequenceBuilder(INIT)
-                .back(30)
+                .back(28.5)
                 .build();
         ParkLeft = drive.trajectorySequenceBuilder(ParkMiddle.end())
                 .setReversed(false)
