@@ -23,6 +23,7 @@ public class Claw implements Subsystem {
     boolean coneDetected, leftDetected, rightDetected, middleDropDetected, leftDropDetected, rightDropDetected, open;
     boolean leftTilt, rightTilt;
     boolean autoDrop = false;
+    boolean active = false;
     private int noneCount = 0, rightCount = 0, leftCount = 0;
 
     public Claw(HardwareMap hardwareMap){
@@ -179,17 +180,19 @@ public class Claw implements Subsystem {
                 rightDetected = sensors[2] < 5;
 
                 if ((leftDetected && rightDetected) || (!leftDetected && !rightDetected)){
-                    outtake();
 
                     noneCount++; leftCount = 0; rightCount = 0;
 
                     if(noneCount > 1) {
+                        outtake();
                         slide.keep();
                         arm.keep();
+                        active = false;
                     }
 
                     return false;
                 } else if (rightDetected) {
+                    active = true;
                     setLeft();
 
                     noneCount = 0; leftCount = 0; rightCount++;
@@ -199,6 +202,7 @@ public class Claw implements Subsystem {
                     return true;
 
                 } else if (leftDetected) {
+                    active = true;
                     setRight();
 
                     noneCount = 0; leftCount++; rightCount = 0;
@@ -252,6 +256,8 @@ public class Claw implements Subsystem {
 
     public double getLeft() { return leftCount; }
     public double getRight() { return rightCount; }
+
+    public boolean isActive() { return active; }
 
     public ArrayList<String> brokenSensors(){
         ArrayList<String> broken = new ArrayList<>();

@@ -11,7 +11,9 @@ public class LiftPID {
     private int target, max;
     private boolean isClose;
     private double I2CDeadzone = 30;
-    private double deadzone = 5;
+
+    private double iZone = 30;
+    private double deadzone = 7;
 
     public LiftPID(double kp, double ki, double kd, int target, int max) {
         this.ogP = kp;
@@ -52,10 +54,6 @@ public class LiftPID {
     public void setI(double i){ ki = i;}
 
     public double getCorrection(double error) {
-        if (Math.abs(error) < 0.001) {
-            return 0;
-        }
-
         totalError += error;
 
         double output = getP(error) + getI(error) + getD(error);
@@ -71,18 +69,28 @@ public class LiftPID {
         totalError = 0;
     }
 
-    public double getCorrectionPosition(double position, double voltage){
+    public double getCorrectionPosition(double position, double voltage, State state){
         setP(ogP / (13.8 / voltage));
 
-        if(Math.abs(position-target) < I2CDeadzone) isClose = true;
+        double distance = Math.abs(position-target);
+
+        if(distance < I2CDeadzone) isClose = true;
         else isClose = false;
 
-        if(Math.abs(position-target) <= deadzone || ((target == 0) && position < target)){
+        if(distance <= deadzone || position < 0){
             totalError = 0;
             return 0;
         }
 
-        if((target < 20)) setI(ogI);
+        if(distance <= iZone){
+            switch(state){
+                case INTAKING:
+                case BACKWARDS:
+                    setI(ogI);
+                default:
+                    setI(ogI/4);
+            }
+        }
         else setI(0);
 
         return getCorrection((target-position)/max);

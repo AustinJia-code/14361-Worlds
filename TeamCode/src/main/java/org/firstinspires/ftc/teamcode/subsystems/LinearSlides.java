@@ -146,8 +146,8 @@ public class LinearSlides implements Subsystem {
         }
     }
 
-    public void powerSlides(double voltage){
-        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition(), voltage);
+    public void powerSlides(double voltage, State state){
+        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition(), voltage, state);
 
         //power = stallCheck(power);
 

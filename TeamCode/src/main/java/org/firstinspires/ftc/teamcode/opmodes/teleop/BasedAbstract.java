@@ -141,11 +141,13 @@ public abstract class BasedAbstract extends OpMode {
         if(driver.wasJustPressed(Button.B)){
             bot.claw.setLeft();
             bot.arm.raise();
+            bot.slide.lower();
         }
 
         if(driver.wasJustPressed(Button.X)){
             bot.claw.setRight();
             bot.arm.raise();
+            bot.slide.lower();
         }
 
         if(driver.wasJustPressed(Button.LEFT_BUMPER)){
@@ -280,11 +282,14 @@ public abstract class BasedAbstract extends OpMode {
                 canCheckI2C = true;
                 if (recess) locked = bot.claw.behindCheck(bot.getState(), loop, bot.arm, bot.slide);
                 if (tilt && !locked) bot.claw.outtakeUpdate(bot.getState(), loop);
+            }else if(!bot.slide.isClose() && recess && bot.claw.isActive()){
+                canCheckI2C = false;
+                locked = bot.claw.behindCheck(bot.getState(), loop, bot.arm, bot.slide);
             }else{
                 canCheckI2C = false;
             }
         }
-        bot.slide.powerSlides(voltageReader.getVoltage());
+        bot.slide.powerSlides(voltageReader.getVoltage(), bot.getState());
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
         loopTime = System.currentTimeMillis() -startTime;
@@ -305,7 +310,8 @@ public abstract class BasedAbstract extends OpMode {
         telemetry.addLine("Runtime: " + runtime.toString());
         telemetry.addLine("Looptime: " + loopTime);
         telemetry.addLine("Multiplier: " + multiplier);
-        telemetry.addLine("I2Cs: " + (tilt && canCheckI2C));
+        telemetry.addLine("Tilt: " + (tilt && canCheckI2C));
+        telemetry.addLine("Recess: " + ((recess && canCheckI2C) || bot.claw.isActive()));
         telemetry.addLine("TSE: " + section%4);
         telemetry.addData("Mode: ", bot.drivetrain.getMode());
     }
