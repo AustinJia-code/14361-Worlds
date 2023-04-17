@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.commands.State.INTAKING;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
@@ -70,26 +72,22 @@ public class LiftPID {
     }
 
     public double getCorrectionPosition(double position, double voltage, State state){
-        setP(ogP / (13.8 / voltage));
+        setP(ogP);
 
         double distance = Math.abs(position-target);
 
         if(distance < I2CDeadzone) isClose = true;
         else isClose = false;
 
-        if(distance <= deadzone || position < 0){
+        if(distance <= deadzone || (position <= deadzone && (state.equals(State.INTAKING)||state.equals(State.LIFTED)||state.equals(State.BACKWARDS)||state.equals(State.GROUND)))){
             totalError = 0;
             return 0;
         }
 
-        if(distance <= iZone){
-            switch(state){
-                case INTAKING:
-                case BACKWARDS:
-                    setI(ogI);
-                default:
-                    setI(ogI/4);
-            }
+        if(state.equals(INTAKING) || state.equals(State.BACKWARDS) || state.equals(State.LIFTED) || state.equals(State.LOW)){
+            setI(ogI);
+        }else if(distance <= iZone){
+            setI(ogI/3.5);
         }
         else setI(0);
 

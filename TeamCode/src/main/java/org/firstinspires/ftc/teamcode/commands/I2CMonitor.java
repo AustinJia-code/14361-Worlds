@@ -31,7 +31,7 @@ public class I2CMonitor {
             double startTime = System.currentTimeMillis();
             double temp = sensor.getDistance(DistanceUnit.INCH);
             if(System.currentTimeMillis()-startTime > cutOff){
-                if(brokeCount++ > 5) ; on = false;
+                if(brokeCount++ > 5) ;  on = false;
             }else{
                 readValue = temp;
             }

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.commands.*;
 
 public class Arm implements Subsystem {
     private Servo leftArm, rightArm;
-    private double INTAKING = 5, GROUND = 5, LIFTED = 150, SCORING = 182, BACKWARDS = 291, LEVEL = 193, VERTICAL = 130;
+    private double INTAKING = 5, GROUND = 5, LIFTED = 150, SCORING = 182, BACKWARDS = 291, LEVEL = 200, VERTICAL = 130;
     private double update = 0.05;
 
     Double goTo;

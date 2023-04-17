@@ -125,10 +125,6 @@ public abstract class BasedAbstract extends OpMode {
             bot.setPosition(bot.getState());
         }
 
-        if(driver.wasJustPressed(Button.DPAD_LEFT)){
-            bot.slide.reset();
-        }
-
         if(driver.wasJustPressed(Button.DPAD_RIGHT)){
             bot = new Robot(hardwareMap, telemetry);
         }
@@ -138,16 +134,28 @@ public abstract class BasedAbstract extends OpMode {
             recess = !recess;
         }
 
-        if(driver.wasJustPressed(Button.B)){
+        if(driver.isDown(Button.B)){
+            tilt = false;
+            recess = false;
             bot.claw.setLeft();
             bot.arm.raise();
             bot.slide.lower();
         }
 
-        if(driver.wasJustPressed(Button.X)){
+        if(driver.isDown(Button.X)){
+            tilt = false;
+            recess = false;
             bot.claw.setRight();
             bot.arm.raise();
             bot.slide.lower();
+        }
+
+        if(driver.wasJustReleased(Button.B) || driver.wasJustReleased(Button.X)){
+            tilt = true;
+            recess = true;
+            bot.claw.outtake();
+            bot.arm.keep();
+            bot.slide.keep();
         }
 
         if(driver.wasJustPressed(Button.LEFT_BUMPER)){
