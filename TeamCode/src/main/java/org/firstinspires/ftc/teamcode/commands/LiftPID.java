@@ -79,7 +79,13 @@ public class LiftPID {
         if(distance < I2CDeadzone) isClose = true;
         else isClose = false;
 
-        if(distance <= deadzone || (position <= deadzone && (state.equals(State.INTAKING)||state.equals(State.LIFTED)||state.equals(State.BACKWARDS)||state.equals(State.GROUND)))){
+        if(distance <= deadzone){
+            totalError = 0;
+            return 0;
+        }
+
+        if((state.equals(State.INTAKING)||state.equals(State.LIFTED)||state.equals(State.BACKWARDS)) && position <= 7){
+            setI(0);
             totalError = 0;
             return 0;
         }
@@ -87,7 +93,7 @@ public class LiftPID {
         if(state.equals(INTAKING) || state.equals(State.BACKWARDS) || state.equals(State.LIFTED) || state.equals(State.LOW)){
             setI(ogI);
         }else if(distance <= iZone){
-            setI(ogI/3.5);
+            setI(ogI/2);
         }
         else setI(0);
 

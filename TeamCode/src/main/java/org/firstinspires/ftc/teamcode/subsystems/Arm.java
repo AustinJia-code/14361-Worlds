@@ -40,7 +40,7 @@ public class Arm implements Subsystem {
                 break;
             case GROUND:
                 this.state = State.GROUND;
-                setArms(GROUND);
+                setArms(INTAKING);
                 break;
             case LOW:
                 this.state = State.LOW;

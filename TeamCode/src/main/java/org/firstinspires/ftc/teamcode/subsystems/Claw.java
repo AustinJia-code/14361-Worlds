@@ -75,13 +75,13 @@ public class Claw implements Subsystem {
     public void TSEOpen(int section){
         switch(section) {
             case 0:
-                claw.setPosition(toServoPosition(125));
+                claw.setPosition(toServoPosition(132));
             case 1:
-                claw.setPosition(toServoPosition(140));
+                claw.setPosition(toServoPosition(137));
             case 2:
-                claw.setPosition(toServoPosition(155));
+                claw.setPosition(toServoPosition(145));
             case 3:
-                claw.setPosition(toServoPosition(170));
+                claw.setPosition(toServoPosition(150));
         }
 
         open = true;

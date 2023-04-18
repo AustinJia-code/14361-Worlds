@@ -31,9 +31,11 @@ public class Robot {
         claw.setPosition(state);
         arm.setPosition(state);
         slide.setPosition(state);
-        this.state = state;
+        if(state.equals(FIVE)||state.equals(FOUR)||state.equals(THREE)||state.equals(TWO)||state.equals(ONE)) this.state = INTAKING;
+        else this.state = state;
     }
 
+    public void setState(State state){this.state = state;}
     public State getState(){
         return state;
     }

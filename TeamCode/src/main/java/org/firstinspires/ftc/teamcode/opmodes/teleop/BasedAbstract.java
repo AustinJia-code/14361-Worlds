@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.teamcode.commands.State;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import static org.firstinspires.ftc.teamcode.commands.State.*;
@@ -99,11 +100,11 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         if(driver.getTrigger(Trigger.LEFT_TRIGGER) > 0.1){
-            desiredSpeed = (0.8 - driver.getTrigger(Trigger.LEFT_TRIGGER) * 0.4) * multiplier;
+            desiredSpeed = (0.7 - driver.getTrigger(Trigger.LEFT_TRIGGER) * 0.4) * multiplier;
         }else if(driver.getTrigger(Trigger.RIGHT_TRIGGER) > 0.1){
             desiredSpeed = 1 * multiplier;
         }else{
-            desiredSpeed = 0.8 * multiplier;
+            desiredSpeed = 0.7 * multiplier;
         }
 
         if(bot.getState() == HIGH) desiredSpeed *= 0.95;
@@ -123,6 +124,10 @@ public abstract class BasedAbstract extends OpMode {
         if(driver.wasJustPressed(Button.DPAD_DOWN)){
             bot.slide.offset -= 10;
             bot.setPosition(bot.getState());
+        }
+
+        if(driver.wasJustPressed(Button.DPAD_LEFT)){
+            bot.slide.reset();
         }
 
         if(driver.wasJustPressed(Button.DPAD_RIGHT)){
@@ -171,6 +176,7 @@ public abstract class BasedAbstract extends OpMode {
 
             // CONESTACK
             if(operator.wasJustPressed(Button.DPAD_UP)){
+
                 bot.setPosition(FIVE);
             }
             if(operator.wasJustPressed(Button.DPAD_RIGHT)){
@@ -298,6 +304,9 @@ public abstract class BasedAbstract extends OpMode {
             }
         }
         bot.slide.powerSlides(voltageReader.getVoltage(), bot.getState());
+
+        if(bot.getState().equals(INTAKING) && operator.getRightY() != 0) bot.setState(State.GROUND);
+        if(bot.getState().equals(GROUND) && operator.getRightY() == 0) bot.setState(State.INTAKING);
         bot.slide.incrementSlides(-operator.getRightY());            // Right Y = slowly raise the slides
 
         loopTime = System.currentTimeMillis() -startTime;
@@ -306,6 +315,7 @@ public abstract class BasedAbstract extends OpMode {
         //hubPowerTelemetry();
         miscTelemetry();
         slideTelemetry();
+        telemetry.addData("State: ", bot.getState());
     }
 
     @Override

@@ -18,7 +18,7 @@ public class LinearSlides implements Subsystem {
     private DcMotorEx leftSlide, rightSlide;
 
     private LiftPID leftPID, rightPID;
-    private int HIGH = spoolChange(1410), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
+    private int HIGH = spoolChange(1400), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
     private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(208), TWO = spoolChange(75), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
@@ -40,8 +40,8 @@ public class LinearSlides implements Subsystem {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftPID = new LiftPID(3, 1, 1, 0, 515);
-        rightPID = new LiftPID(3, 1, 1, 0, 515);
+        leftPID = new LiftPID(3, 0.17, 1, 0, 515);
+        rightPID = new LiftPID(3, 0.17, 1, 0, 515);
 
         leftSlide.setPower(0);
         rightSlide.setPower( 0);
@@ -149,10 +149,34 @@ public class LinearSlides implements Subsystem {
     public void powerSlides(double voltage, State state){
         double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition(), voltage, state);
 
+        switch(state){
+            case INTAKING:
+            case BACKWARDS:
+            case LIFTED:
+            case LOW:
+                if(rightSlide.getCurrentPosition() < 7){
+                    power = 0;
+                    rightPID.setI(0);
+                    rightPID.clearError();
+                }
+                break;
+        }
+
         //power = stallCheck(power);
 
-        rightSlide.setPower(power);
-        leftSlide.setPower(power);
+        if(power < -0.9){
+            if(rightSlide.getCurrentPosition() < 10){
+                power = 0;
+            }
+        }
+
+        if(rightSlide.getPower() < -0.9 && rightSlide.getCurrentPosition() < 10 && state.equals(INTAKING)){
+            rightSlide.setPower(0);
+            leftSlide.setPower(0);
+        }else{
+            rightSlide.setPower(power);
+            leftSlide.setPower(power);
+        }
     }
 
     public void setModeToPosition(){
@@ -230,6 +254,15 @@ public class LinearSlides implements Subsystem {
     public void reset(){
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftSlide.setPower(0);
+        rightSlide.setPower( 0);
+
+        rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     public double stallCheck(double power){
