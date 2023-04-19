@@ -14,7 +14,7 @@ public class LiftPID {
     private boolean isClose;
     private double I2CDeadzone = 30;
 
-    private double iZone = 30;
+    private double iZone = 100;
     private double deadzone = 7;
 
     public LiftPID(double kp, double ki, double kd, int target, int max) {

@@ -75,10 +75,10 @@ public class Arm implements Subsystem {
                 setArms(LEVEL);
                 break;
             case MIDDLE:
-                setArms(SCORING - 17);
+                setArms(SCORING - 20);
                 break;
             case HIGH:
-                setArms(SCORING - 23);
+                setArms(SCORING - 28);
                 break;
             default:
                 setArms(SCORING);

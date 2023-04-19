@@ -134,8 +134,18 @@ public class Claw implements Subsystem {
         pronated = false;
     }
 
+    public void setBehindLeft(){
+        wrist.setPosition(toServoPosition(supinatedAngle+22));
+        pronated = false;
+    }
+
     public void setRight(){
         wrist.setPosition(toServoPosition(supinatedAngle-18));
+        pronated = false;
+    }
+
+    public void setBehindRight(){
+        wrist.setPosition(toServoPosition(supinatedAngle-22));
         pronated = false;
     }
 
@@ -183,7 +193,7 @@ public class Claw implements Subsystem {
 
                     noneCount++; leftCount = 0; rightCount = 0;
 
-                    if(noneCount > 1) {
+                    if(noneCount > 0) {
                         outtake();
                         slide.keep();
                         arm.keep();
@@ -193,7 +203,7 @@ public class Claw implements Subsystem {
                     return false;
                 } else if (rightDetected) {
                     active = true;
-                    setLeft();
+                    setBehindLeft();
 
                     noneCount = 0; leftCount = 0; rightCount++;
 
@@ -203,7 +213,7 @@ public class Claw implements Subsystem {
 
                 } else if (leftDetected) {
                     active = true;
-                    setRight();
+                    setBehindRight();
 
                     noneCount = 0; leftCount++; rightCount = 0;
 

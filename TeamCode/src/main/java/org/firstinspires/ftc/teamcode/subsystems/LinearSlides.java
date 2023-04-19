@@ -99,13 +99,13 @@ public class LinearSlides implements Subsystem {
 
     public void lower(){
         if(!lowered) {
-            setTarget(Math.max(0,target - spoolChange(140)));
+            setTarget(Math.max(0,target - spoolChange(250)));
         }
         lowered = true;
     };
     public void keep(){
         if(lowered) {
-            setTarget(Math.max(0, target + spoolChange(140)));
+            setTarget(Math.max(0, target + spoolChange(250)));
         }
         lowered = false;
     };
