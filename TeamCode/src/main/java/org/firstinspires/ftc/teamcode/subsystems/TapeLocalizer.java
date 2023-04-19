@@ -124,4 +124,8 @@ public class TapeLocalizer implements Subsystem {
         }
         return readings;
     }
+
+    public String thangin(){
+        return one.red() + " " + two.red() + " " + three.red() + " " + four.red();
+    }
 }

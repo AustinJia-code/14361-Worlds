@@ -20,7 +20,7 @@ public class RightMid extends Mid {
 
     public void build(){
         side = 1;
-        SCORING_POSITION = new Pose2d(29,-18.25, toRadians(225));
+        SCORING_POSITION = new Pose2d(28,-19.25, toRadians(225));
         STORAGE_POSITION = new Pose2d(52.25, -10.5, toRadians(0));
 
         drive.setPoseEstimate(INIT);

@@ -35,7 +35,7 @@ public abstract class BasedAbstract extends OpMode {
     private boolean curRT, oldRT, curLT, oldLT, tilt, recess, locked;
     int section = 0;
     List<LynxModule> allHubs;
-    ColorRangeSensor one;
+//    ColorRangeSensor one, two, five, four;
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
 
@@ -56,6 +56,11 @@ public abstract class BasedAbstract extends OpMode {
         bot = new Robot(hardwareMap, telemetry);
         loop = 0;
 
+//        one = hardwareMap.get(ColorRangeSensor.class, "one");
+//        two = hardwareMap.get(ColorRangeSensor.class, "two");
+//        //three = hardwareMap.get(ColorRangeSensor.class, "three");
+//        four = hardwareMap.get(ColorRangeSensor.class, "four");
+//        five = hardwareMap.get(ColorRangeSensor.class, "five");
         voltageReader = new VoltageReader(hardwareMap);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -317,6 +322,7 @@ public abstract class BasedAbstract extends OpMode {
         slideTelemetry();
         telemetry.addData("Total Error: ", bot.slide.getTotalError());
         telemetry.addData("Current Pos: ", bot.slide.getCurrentPos());
+//        telemetry.addData("Colors: ", one.red() + " " + two.red() + " " + four.red() + " " + five.red());
     }
 
     @Override
