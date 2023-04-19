@@ -27,7 +27,7 @@ public class LinearSlides implements Subsystem {
 
     Mode mode = Mode.POWER;
 
-    private int update;
+    private int update, currentPosition;
 
     public LinearSlides(HardwareMap hardwareMap){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -99,13 +99,13 @@ public class LinearSlides implements Subsystem {
 
     public void lower(){
         if(!lowered) {
-            setTarget(target - spoolChange(140));
+            setTarget(Math.max(0,target - spoolChange(140)));
         }
         lowered = true;
     };
     public void keep(){
         if(lowered) {
-            setTarget(target + spoolChange(140));
+            setTarget(Math.max(0, target + spoolChange(140)));
         }
         lowered = false;
     };
@@ -147,6 +147,7 @@ public class LinearSlides implements Subsystem {
     }
 
     public void powerSlides(double voltage, State state){
+        //currentPosition = Math.max(rightSlide.getCurrentPosition(), 0);
         double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition(), voltage, state);
 
         switch(state){
@@ -154,7 +155,7 @@ public class LinearSlides implements Subsystem {
             case BACKWARDS:
             case LIFTED:
             case LOW:
-                if(rightSlide.getCurrentPosition() < 7){
+                if(Math.min(rightSlide.getCurrentPosition(), leftSlide.getCurrentPosition()) < 7){
                     power = 0;
                     rightPID.setI(0);
                     rightPID.clearError();
@@ -164,19 +165,8 @@ public class LinearSlides implements Subsystem {
 
         //power = stallCheck(power);
 
-        if(power < -0.9){
-            if(rightSlide.getCurrentPosition() < 10){
-                power = 0;
-            }
-        }
-
-        if(rightSlide.getPower() < -0.9 && rightSlide.getCurrentPosition() < 10 && state.equals(INTAKING)){
-            rightSlide.setPower(0);
-            leftSlide.setPower(0);
-        }else{
-            rightSlide.setPower(power);
-            leftSlide.setPower(power);
-        }
+        rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
     public void setModeToPosition(){
@@ -279,5 +269,13 @@ public class LinearSlides implements Subsystem {
 
     public static int spoolChange(int height){
             return (int) (height / 1.2 / 384.5 * 145.1);
+    }
+
+    public double getTotalError(){
+        return rightPID.getTotalError();
+    }
+
+    public double getCurrentPos(){
+        return currentPosition;
     }
 }

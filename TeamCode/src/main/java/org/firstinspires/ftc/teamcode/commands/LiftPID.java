@@ -80,6 +80,7 @@ public class LiftPID {
         else isClose = false;
 
         if(distance <= deadzone){
+            setI(0);
             totalError = 0;
             return 0;
         }
@@ -112,5 +113,9 @@ public class LiftPID {
 
     public void setTarget(int target){
         this.target = target;
+    }
+
+    public double getTotalError(){
+        return totalError;
     }
 }

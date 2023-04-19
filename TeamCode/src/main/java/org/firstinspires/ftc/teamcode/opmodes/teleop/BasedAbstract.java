@@ -315,7 +315,8 @@ public abstract class BasedAbstract extends OpMode {
         //hubPowerTelemetry();
         miscTelemetry();
         slideTelemetry();
-        telemetry.addData("State: ", bot.getState());
+        telemetry.addData("Total Error: ", bot.slide.getTotalError());
+        telemetry.addData("Current Pos: ", bot.slide.getCurrentPos());
     }
 
     @Override
@@ -348,7 +349,8 @@ public abstract class BasedAbstract extends OpMode {
         //telemetry.addData("RCurrent: ", bot.slide.getRightCurrent());
 
         //telemetry.addData("LPosition: ", bot.slide.getRightPosition());
-        telemetry.addData("RPosition: ", bot.slide.getLeftPosition());
+        telemetry.addData("Left Position: ", bot.slide.getLeftPosition());
+        telemetry.addData("Right Position: ", bot.slide.getRightPosition());
 
         //telemetry.addData("Looptime: ", loopTime);
 
