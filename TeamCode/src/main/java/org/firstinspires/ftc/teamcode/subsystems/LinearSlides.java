@@ -19,7 +19,7 @@ public class LinearSlides implements Subsystem {
 
     private LiftPID leftPID, rightPID;
     private int HIGH = spoolChange(1400), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
-    private int FIVE = spoolChange(410), FOUR = spoolChange(308), THREE = spoolChange(228), TWO = spoolChange(95), ONE = 00;
+    private int FIVE = spoolChange(400), FOUR = spoolChange(360), THREE = spoolChange(250), TWO = spoolChange(115), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
     int target;
@@ -116,6 +116,10 @@ public class LinearSlides implements Subsystem {
 
     public void highLilHigher(){
         setTarget(HIGH+20);
+    }
+
+    public void highLilLower(){
+        setTarget(HIGH - 40);
     }
 
     public void incrementSlides(double input){

@@ -160,6 +160,9 @@ public abstract class High extends LinearOpMode {
         }
         else{
             return drive.trajectorySequenceBuilder(preceding.end())
+                    .addTemporalMarker(0, () -> {
+                        bot.slide.setPosition(State.HIGH);
+                    })
                     .waitSeconds(time)
                     .build();
         }
@@ -230,8 +233,8 @@ public abstract class High extends LinearOpMode {
                     bot.claw.outtakeUpdate(State.HIGH, gamepad1, gamepad2, 10);
                 })
                 */
-                .addTemporalMarker(2, () -> {
-                    bot.slide.setPosition(State.MIDDLE);
+                .addTemporalMarker(1.85, () -> {
+                    bot.slide.highLilLower();
                 })
                 .back(11.5)
                 .splineTo(new Vector2d(SCORING_POSITION.getX()+xOffset,SCORING_POSITION.getY()+yOffset), SCORING_POSITION.getHeading()+headingOffset)

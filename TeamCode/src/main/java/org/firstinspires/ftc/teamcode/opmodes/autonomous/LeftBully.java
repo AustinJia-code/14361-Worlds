@@ -20,7 +20,7 @@ public class LeftBully extends High {
 
     public void build(){
         side = -1;
-        SCORING_POSITION = new Pose2d(-24.2,-4.75, toRadians(45));
+        SCORING_POSITION = new Pose2d(-24.2,-4.25, toRadians(45));
         STORAGE_POSITION = new Pose2d(-48.8, -12.2, toRadians(180));
 
         drive.setPoseEstimate(INIT);
