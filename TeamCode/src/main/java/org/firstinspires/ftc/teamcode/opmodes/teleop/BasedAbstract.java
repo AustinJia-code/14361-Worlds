@@ -30,6 +30,7 @@ public abstract class BasedAbstract extends OpMode {
     private VoltageReader voltageReader;
     int alliance;
     boolean canCheckI2C;
+    double slideOverride;
     int loop;
     double multiplier, loopTime;
     private boolean curRT, oldRT, curLT, oldLT, tilt, recess, locked;
@@ -230,19 +231,9 @@ public abstract class BasedAbstract extends OpMode {
                 bot.claw.close();
             }
             if (operator.getTrigger(Trigger.RIGHT_TRIGGER) > 0.05) {
-                if (!oldRT) {
-                    bot.claw.setPosition(INTAKING);
-                    bot.slide.setPosition(INTAKING);
-                    bot.arm.setPosition(INTAKING);
-                }
-                oldRT = curRT;
-                curRT = true;
-            } else {
-                oldRT = curRT;
-                curRT = false;
-                if (!curRT && oldRT) {
-                    bot.claw.close();
-                }
+                slideOverride = operator.getTrigger(Trigger.RIGHT_TRIGGER);
+            }else{
+                slideOverride = 0;
             }
             if (operator.wasJustPressed(Button.LEFT_BUMPER)) {                           // Right Bumper = Opens Claw, Goes to Floor
                 if (bot.getState() == INTAKING) bot.setPosition(LIFTED);
@@ -308,7 +299,7 @@ public abstract class BasedAbstract extends OpMode {
                 canCheckI2C = false;
             }
         }
-        bot.slide.powerSlides(voltageReader.getVoltage(), bot.getState());
+        bot.slide.powerSlides(voltageReader.getVoltage(), bot.getState(), slideOverride);
 
         if(bot.getState().equals(INTAKING) && operator.getRightY() != 0) bot.setState(State.GROUND);
         if(bot.getState().equals(GROUND) && operator.getRightY() == 0) bot.setState(State.INTAKING);

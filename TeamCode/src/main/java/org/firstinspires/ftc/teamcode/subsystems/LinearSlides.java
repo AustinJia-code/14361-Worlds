@@ -19,7 +19,7 @@ public class LinearSlides implements Subsystem {
 
     private LiftPID leftPID, rightPID;
     private int HIGH = spoolChange(1400), MIDDLE = spoolChange(630), LOW = 0, INTAKE = 0;
-    private int FIVE = spoolChange(400), FOUR = spoolChange(360), THREE = spoolChange(250), TWO = spoolChange(115), ONE = 00;
+    private int FIVE = spoolChange(430), FOUR = spoolChange(360), THREE = spoolChange(250), TWO = spoolChange(130), ONE = 00;
     public int offset = 0;
     public boolean lowered = false;
     int target;
@@ -150,16 +150,17 @@ public class LinearSlides implements Subsystem {
         }
     }
 
-    public void powerSlides(double voltage, State state){
+    public void powerSlides(double voltage, State state, double override){
+        int rightCurrent = rightSlide.getCurrentPosition();
         //currentPosition = Math.max(rightSlide.getCurrentPosition(), 0);
-        double power = rightPID.getCorrectionPosition(rightSlide.getCurrentPosition(), voltage, state);
+        double power = rightPID.getCorrectionPosition(rightCurrent, voltage, state);
 
         switch(state){
             case INTAKING:
             case BACKWARDS:
             case LIFTED:
             case LOW:
-                if(Math.min(rightSlide.getCurrentPosition(), leftSlide.getCurrentPosition()) < 7){
+                if(Math.min(rightCurrent, leftSlide.getCurrentPosition()) < 7){
                     power = 0;
                     rightPID.setI(0);
                     rightPID.clearError();
@@ -168,7 +169,10 @@ public class LinearSlides implements Subsystem {
         }
 
         //power = stallCheck(power);
-
+        if(override != 0){
+            setTarget(rightCurrent);
+            power = -override;
+        }
         rightSlide.setPower(power);
         leftSlide.setPower(power);
     }

@@ -85,17 +85,18 @@ public class LiftPID {
             return 0;
         }
 
-        if((state.equals(State.INTAKING)||state.equals(State.LIFTED)||state.equals(State.BACKWARDS)) && position <= 7){
-            setI(0);
-            totalError = 0;
-            return 0;
-        }
-
-        if(state.equals(INTAKING) || state.equals(State.BACKWARDS) || state.equals(State.LIFTED) || state.equals(State.LOW)){
-            setI(ogI);
+        if((state.equals(State.INTAKING)||state.equals(State.LIFTED)||state.equals(State.BACKWARDS)) || state.equals(State.LOW) || target == 0){
+            if(position <= 7) {
+                setI(0);
+                totalError = 0;
+                return 0;
+            }else{
+                setI(ogI*2);
+            }
         }else if(distance <= iZone){
             setI(ogI/2);
         }
+
         else setI(0);
 
         return getCorrection((target-position)/max);

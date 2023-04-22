@@ -23,7 +23,7 @@ public class RightBully extends High {
     public void build(){
         side = 1;
         SCORING_POSITION = new Pose2d(23.75,-5.5, toRadians(135));
-        STORAGE_POSITION = new Pose2d(48.2, -11, toRadians(0));
+        STORAGE_POSITION = new Pose2d(47.6, -11, toRadians(0));
 
         drive.setPoseEstimate(INIT);
 
@@ -64,7 +64,7 @@ public class RightBully extends High {
 
         ScoreToStorage5 = ScoreToStorage(WaitAtScore5, -1, 2, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
-        StorageToScore5 = StorageToScoreLast(WaitAtStorage5, 0, 3.4, 0);
+        StorageToScore5 = StorageToScoreLast(WaitAtStorage5, 0.5, 3.75, 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
 
         ParkMiddle = drive.trajectorySequenceBuilder(WaitAtScore6.end())
