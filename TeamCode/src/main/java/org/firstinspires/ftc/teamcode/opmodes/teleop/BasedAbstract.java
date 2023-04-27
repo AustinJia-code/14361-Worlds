@@ -239,7 +239,7 @@ public abstract class BasedAbstract extends OpMode {
                 if (bot.getState() == INTAKING) bot.setPosition(LIFTED);
                 else if (bot.getState() == BACKWARDS || bot.getState() == LIFTED || bot.getState() == LOW)
                     bot.setPosition(BACKWARDS);
-                else bot.setPosition(LOW);
+                else bot.setPosition(LIFTED);
             }
             if (operator.wasJustReleased(Button.LEFT_BUMPER)) {                            // Left Bumper = Closes Claw, Goes to Ground
                 bot.claw.close();
