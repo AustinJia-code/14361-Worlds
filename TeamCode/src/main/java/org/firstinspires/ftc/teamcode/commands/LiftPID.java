@@ -15,7 +15,7 @@ public class LiftPID {
     private double I2CDeadzone = 30;
 
     private double iZone = 100;
-    private double deadzone = 7;
+    private double deadzone = 3;
 
     public LiftPID(double kp, double ki, double kd, int target, int max) {
         this.ogP = kp;
@@ -86,7 +86,7 @@ public class LiftPID {
         }
 
         if((state.equals(State.INTAKING)||state.equals(State.LIFTED)||state.equals(State.BACKWARDS)) || state.equals(State.LOW) || target == 0){
-            if(position <= 7) {
+            if(position <= 0) {
                 setI(0);
                 totalError = 0;
                 return 0;

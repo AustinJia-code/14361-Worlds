@@ -160,7 +160,7 @@ public class LinearSlides implements Subsystem {
             case BACKWARDS:
             case LIFTED:
             case LOW:
-                if(Math.min(rightCurrent, leftSlide.getCurrentPosition()) < 7){
+                if(Math.min(rightCurrent, leftSlide.getCurrentPosition()) < 0){
                     power = 0;
                     rightPID.setI(0);
                     rightPID.clearError();
