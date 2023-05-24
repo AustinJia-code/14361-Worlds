@@ -41,12 +41,12 @@ public class LeftBully extends High {
                 .build();
         WaitAtScore1 = waitSequence(ScorePreload, waitAtScore, false);
 
-        ScoreToStorage1 = ScoreToStorage(ScorePreload, 0, -2, 0);
+        ScoreToStorage1 = ScoreToStorage(ScorePreload, 0, -1, 0);
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
         StorageToScore1 = StorageToScore(WaitAtStorage1, -0.75, -0.4, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
 
-        ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, -0.8, 0);
+        ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, 0, 0);
         WaitAtStorage2 = waitSequence(ScoreToStorage2, waitAtStorage, true);
         StorageToScore2 = StorageToScore(WaitAtStorage2, -0.25, 0, 0);
         WaitAtScore3 = waitSequence(StorageToScore2, waitAtScore, false);
@@ -61,7 +61,7 @@ public class LeftBully extends High {
         StorageToScore4 = StorageToScore(WaitAtStorage4, 0.25, -1, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0.5, -0.7, 0);
+        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0.5, 0, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
         StorageToScore5 = StorageToScore(WaitAtStorage5, 0.3, -1.8, 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
