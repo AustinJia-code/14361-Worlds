@@ -78,7 +78,7 @@ public class RightMid extends Mid {
                     bot.claw.open();
                 })
                 .forward(12)
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .build();
         ParkLeft = drive.trajectorySequenceBuilder(StorageToScore5.end())
                 .setReversed(false)
@@ -90,7 +90,7 @@ public class RightMid extends Mid {
                 .lineToLinearHeading(new Pose2d(PARK_MIDDLE.vec(), toRadians(0)))
                 .back(22.5)
                 .strafeRight(8)
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .build();
         ParkRight = drive.trajectorySequenceBuilder(StorageToScore5.end())
                 .setReversed(false)
@@ -102,7 +102,7 @@ public class RightMid extends Mid {
                 .lineToLinearHeading(PARK_MIDDLE)
                 .strafeLeft(28)
                 .forward(8)
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .build();
     }
 

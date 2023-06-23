@@ -20,8 +20,8 @@ public class LeftBully extends High {
 
     public void build(){
         side = -1;
-        SCORING_POSITION = new Pose2d(-24.8,-7.5, toRadians(45));
-        STORAGE_POSITION = new Pose2d(-48.5, -9.5, toRadians(180));
+        SCORING_POSITION = new Pose2d(-24.3,-7.0, toRadians(45));
+        STORAGE_POSITION = new Pose2d(-47.75, -12.5, toRadians(173));
 
         drive.setPoseEstimate(INIT);
 
@@ -35,7 +35,7 @@ public class LeftBully extends High {
                     bot.arm.slamThatJawn();
                 })
                 .back(34)
-                .splineTo(new Vector2d(SCORING_POSITION.getX()-2, SCORING_POSITION.getY()-3), SCORING_POSITION.getHeading())
+                .splineTo(new Vector2d(SCORING_POSITION.getX(), SCORING_POSITION.getY()-3), SCORING_POSITION.getHeading())
                 .back(2)
                 .resetConstraints()
                 .build();
@@ -74,7 +74,7 @@ public class LeftBully extends High {
                 })
                 .lineToLinearHeading(PARK_MIDDLE)
                 .forward(8)
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .build();
         ParkLeft = drive.trajectorySequenceBuilder(WaitAtScore6.end())
                 .setReversed(false)
@@ -85,7 +85,7 @@ public class LeftBully extends High {
                 .forward(6)
                 .lineToLinearHeading(PARK_LEFT)
                 .forward(8)
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .build();
         ParkRight = drive.trajectorySequenceBuilder(WaitAtScore6.end())
                 .setReversed(true)
@@ -96,7 +96,7 @@ public class LeftBully extends High {
                 .lineToLinearHeading(PARK_MIDDLE)
                 .strafeLeft(27)
                 .forward(8)
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .build();
     }
 

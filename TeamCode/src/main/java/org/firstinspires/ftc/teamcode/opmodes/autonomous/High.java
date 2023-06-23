@@ -146,7 +146,8 @@ public abstract class High extends LinearOpMode {
             case MIDDLE:
                 drive.followTrajectorySequence(ParkMiddle);
         }
-        bot.slide.setPosition(State.ONE);
+
+        bot.setPosition(State.INTAKING);
     }
     public TrajectorySequence waitSequence(TrajectorySequence preceding, double time, boolean lift){
         if(lift) {
