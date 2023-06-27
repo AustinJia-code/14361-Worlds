@@ -1,7 +1,7 @@
 ## GONE GLOBOL
 
 Done:
-- Go undefeated in Jemison
+- Go undefeated in Jemison quals
 - Compete in MTI finals
 - Make memories
   
