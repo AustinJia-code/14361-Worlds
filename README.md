@@ -1,4 +1,4 @@
-## GOING GLOBOL
+## GONE GLOBOL
 
 Done:
 - Go undefeated in Jemison
