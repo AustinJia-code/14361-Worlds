@@ -229,6 +229,7 @@ public class LinearSlides implements Subsystem {
     public int getTarget(){
         return rightSlide.getTargetPosition();
     }
+    public int getOffset(){return offset;}
     public double getLeftCurrent(){
         return leftSlide.getCurrent(CurrentUnit.AMPS);
     }

@@ -36,7 +36,7 @@ public abstract class BasedAbstract extends OpMode {
     private boolean curRT, oldRT, curLT, oldLT, tilt, recess, locked;
     int section = 0;
     List<LynxModule> allHubs;
-//    ColorRangeSensor one, two, five, four;
+    //ColorRangeSensor one, two, five, four;
 
     public abstract void setAlliance(); //-1 BLUE, 0 NEITHER, 1 RED
 
@@ -128,8 +128,9 @@ public abstract class BasedAbstract extends OpMode {
         }
 
         if(driver.wasJustPressed(Button.DPAD_DOWN)){
-            bot.slide.offset -= 10;
-            bot.setPosition(bot.getState());
+            //bot.slide.offset -= 10;
+            //bot.setPosition(bot.getState());
+            bot.slide.reset();
         }
 
         if(driver.wasJustPressed(Button.DPAD_LEFT)){
@@ -341,6 +342,8 @@ public abstract class BasedAbstract extends OpMode {
     public void slideTelemetry(){
         telemetry.addData("Target: ", bot.slide.getTarget());
         telemetry.addData("Power: ", bot.slide.getPower());
+
+        telemetry.addData("Offset: ", bot.slide.getOffset());
 
         //telemetry.addData("LCurrent: ", bot.slide.getLeftCurrent());
         //telemetry.addData("RCurrent: ", bot.slide.getRightCurrent());

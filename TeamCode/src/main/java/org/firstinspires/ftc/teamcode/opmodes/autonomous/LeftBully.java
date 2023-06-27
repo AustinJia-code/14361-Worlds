@@ -20,22 +20,21 @@ public class LeftBully extends High {
 
     public void build(){
         side = -1;
-        SCORING_POSITION = new Pose2d(-24.3,-7.0, toRadians(45));
-        STORAGE_POSITION = new Pose2d(-47.75, -12.5, toRadians(173));
+        SCORING_POSITION = new Pose2d(-23.5,-1.75, toRadians(45));
+        STORAGE_POSITION = new Pose2d(-47.75, -11.5, toRadians(180));
 
         drive.setPoseEstimate(INIT);
-
         ScorePreload = drive.trajectorySequenceBuilder(INIT)
-                .setConstraints(Constrainer.vel(50), Constrainer.accel(50))
-                .addTemporalMarker(0.6, () -> bot.setPosition(State.HIGH))
-                .addTemporalMarker(0.7, () -> bot.slide.setTarget(LinearSlides.spoolChange(1420)))
-                .addTemporalMarker(0.8, () -> bot.arm.setPosition(State.HIGH))
+                .setConstraints(Constrainer.vel(40), Constrainer.accel(40))
+                .addTemporalMarker(1.1, () -> bot.setPosition(State.HIGH))
+                .addTemporalMarker(1.1, () -> bot.slide.setTarget(LinearSlides.spoolChange(1420)))
+                .addTemporalMarker(1.1, () -> bot.arm.setPosition(State.HIGH))
                 .addTemporalMarker(2.2, () -> {
                     bot.slide.setPosition(State.LOW);
                     bot.arm.slamThatJawn();
                 })
-                .back(34)
-                .splineTo(new Vector2d(SCORING_POSITION.getX(), SCORING_POSITION.getY()-3), SCORING_POSITION.getHeading())
+                .back(31)
+                .splineTo(new Vector2d(SCORING_POSITION.getX(), SCORING_POSITION.getY()-4), SCORING_POSITION.getHeading())
                 .back(2)
                 .resetConstraints()
                 .build();
@@ -43,27 +42,27 @@ public class LeftBully extends High {
 
         ScoreToStorage1 = ScoreToStorage(ScorePreload, 0, -1, 0);
         WaitAtStorage1 = waitSequence(ScoreToStorage1, waitAtStorage, true);
-        StorageToScore1 = StorageToScore(WaitAtStorage1, -0.75, -0.4, 0);
+        StorageToScore1 = StorageToScore(WaitAtStorage1, -0.75, -1, 0);
         WaitAtScore2 = waitSequence(StorageToScore1, waitAtScore, false);
 
         ScoreToStorage2 = ScoreToStorage(WaitAtScore2, 0, 0, 0);
         WaitAtStorage2 = waitSequence(ScoreToStorage2, waitAtStorage, true);
-        StorageToScore2 = StorageToScore(WaitAtStorage2, -0.25, 0, 0);
+        StorageToScore2 = StorageToScore(WaitAtStorage2, 0, 0.25, 0);
         WaitAtScore3 = waitSequence(StorageToScore2, waitAtScore, false);
 
-        ScoreToStorage3 = ScoreToStorage(WaitAtScore3, 0.25, -0.6,0);
+        ScoreToStorage3 = ScoreToStorage(WaitAtScore3, 0.5, 0.5,0);
         WaitAtStorage3 = waitSequence(ScoreToStorage3, waitAtStorage, true);
-        StorageToScore3 = StorageToScore(WaitAtStorage3, 0, -0.85, 0);
+        StorageToScore3 = StorageToScore(WaitAtStorage3, 0, 0, 0);
         WaitAtScore4 = waitSequence(StorageToScore3, waitAtScore, false);
 
-        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 0.25, -0.5, 0);
+        ScoreToStorage4 = ScoreToStorage(WaitAtScore4, 0.25, 0.5, 0);
         WaitAtStorage4 = waitSequence(ScoreToStorage4, waitAtStorage, true);
-        StorageToScore4 = StorageToScore(WaitAtStorage4, 0.25, -1, 0);
+        StorageToScore4 = StorageToScore(WaitAtStorage4, 0.75, -2, 0);
         WaitAtScore5 = waitSequence(StorageToScore4, waitAtScore, false);
 
-        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0.5, 0, 0);
+        ScoreToStorage5 = ScoreToStorage(WaitAtScore5, 0.5, 1.5, 0);
         WaitAtStorage5 = waitSequence(ScoreToStorage5, waitAtStorage, true);
-        StorageToScore5 = StorageToScore(WaitAtStorage5, 0.3, -1.8, 0);
+        StorageToScore5 = StorageToScore(WaitAtStorage5, 0, -1, 0);
         WaitAtScore6 = waitSequence(StorageToScore5, waitAtScore, false);
 
         ParkMiddle = drive.trajectorySequenceBuilder(WaitAtScore6.end())
